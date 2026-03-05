@@ -26,7 +26,7 @@
 
 ## 🏅 Desafio <a id="desafio"></a>
 
-
+O desafio consiste em criar um sistema centralizado de apontamento de horas para controlar projetos, clientes e recursos, substituindo registros dispersos (planilhas, mensagens e anotações). O objetivo é organizar o registro de trabalho, dar visibilidade ao esforço gasto, custos envolvidos e valores a serem cobrados, sem exigir que o usuário preencha informações complexas.
 
 ## 🏅 Solução <a id="solucao"></a>
 
@@ -41,10 +41,12 @@
 
 ## 🏃‍ DoR - Definition of Ready <a id="dor"></a>
 
-* User Stories com **Critérios de Aceitação**
-* Cenários **a partir das US**
-* Design no **Canva**
-* Modelagem do **Banco de Dados**
+* **Mockup/Protótipo:** incluir representação visual da funcionalidade quando aplicável.
+* **Descrição clara:** explicar de forma objetiva o que deve ser desenvolvido.
+* **Critérios de aceitação:** definir as condições necessárias para considerar a tarefa concluída.
+* **Dicionário de dados:** listar campos existentes, seus tipos e descrições.
+* **Dependências:** verificar e registrar se a tarefa depende de outra.
+* **Mensagens do sistema:** definir mensagens de confirmação, erro e aviso.
 
 ## 🏆 DoD - Definition of Done <a id="dod"></a>
 
