@@ -1,6 +1,6 @@
 # API DSM 3 SEMESTRE 2026
 
-# Título da aplicação
+# Controle de Apontamento de Horas - GSW
 
 <h2 align="center"> Chronos </h2>
 
