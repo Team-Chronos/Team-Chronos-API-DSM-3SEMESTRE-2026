@@ -5,6 +5,7 @@
 <h2 align="center"> Chronos </h2>
 
 <p align="center">
+  <a href ="#dor">Dor do cliente</a>  |
   <a href ="#desafio">Desafio</a>  |
   <a href ="#solucao">Solução</a>  |   
   <a href ="#backlog">Backlog do Produto</a>  |
@@ -22,6 +23,10 @@
 > Pasta de Documentação: [Documentação das Sprints](https://github.com/Team-Chronos/API-DSM-3SEMESTRE-2026/tree/main/docs)
 > 
 > Video do Projeto: Indisponível 📽️
+
+## 😢 Dor do Cliente <a id="dor"></a>
+
+O principal dor do cliente está na dificuldade de organizar e gerir a equipe de forma eficiente diante do crescente volume de demandas. A falta de um processo centralizado e a lentidão no fluxo de informações geram gargalos operacionais que quebram a dinâmica do trabalho diário. Essa dispersão não apenas prejudica a autonomia dos colaboradores, mas também tira dos gestores a visibilidade clara sobre o esforço e a capacidade da equipe, reduzindo drasticamente a produtividade geral e impedindo o negócio de escalar seus resultados.
 
 ## 🏅 Desafio <a id="desafio"></a>
 
