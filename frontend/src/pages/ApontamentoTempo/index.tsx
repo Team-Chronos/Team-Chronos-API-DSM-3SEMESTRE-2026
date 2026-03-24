@@ -1,82 +1,112 @@
-import { useState } from "react"
-import ApontamentoListaTarefas from "../../components/ApontamentoListaTarefas"
+import { useEffect, useState } from "react"
+import ApontamentoListaTarefas from "./ListaTarefas"
 import type { Tarefa } from "../../types/tarefa"
 import type { Item } from "../../types/item"
-import TarefasInfo from "../../components/TarefasInfo"
+import TarefasInfo from "./TarefasInfo"
 
 function ApontamentoTempo(){
-  const [ tarefas, setTarefas ] = useState<Tarefa[]>([
-  {
-    id: 1,
-    titulo: "Implementar login",
-    descricao: "Criar autenticação com JWT",
-    tempoMaximoMinutos: 25,
-    status: "pendente",
-    responsavel_id: 1,
-    item_id: 0
-  },
-  {
-    id: 2,
-    titulo: "Criar tela de dashboard",
-    descricao: "Layout inicial com gráficos",
-    tempoMaximoMinutos: 28,
-    status: "em andamento",
-    responsavel_id: 2,
-    item_id: 1
-  },
-  {
-    id: 3,
-    titulo: "Configurar banco de dados",
-    tempoMaximoMinutos: 22,
-    status: "concluido",
-    responsavel_id: 1,
-    item_id: 2
-  },
-  {
-    id: 4,
-    titulo: "Implementar API de tarefas",
-    descricao: "CRUD completo de tarefas",
-    tempoMaximoMinutos: 30,
-    status: "pendente",
-    responsavel_id: 3,
-    item_id: 0
-  },
-  {
-    id: 5,
-    titulo: "Adicionar validações",
-    descricao: "Validar inputs no frontend",
-    tempoMaximoMinutos: 27,
-    status: "em andamento",
-    responsavel_id: 2,
-    item_id: 1
-  },
-  {
-    id: 6,
-    titulo: "Deploy da aplicação",
-    tempoMaximoMinutos: 1,
-    status: "pendente",
-    responsavel_id: 3,
-    item_id: 2
-  }
-])
-  const [ itens, setItens ] = useState<Item[]>([
-  {
-    id: 0,
-    nome: "Sem item",
-    descricao: "Tarefas não relacionadas a um item"
-  },
-  {
-    id: 1,
-    nome: "Frontend",
-    descricao: "Tarefas relacionadas à interface do usuário e experiência"
-  },
-  {
-    id: 2,
-    nome: "DevOps",
-    descricao: "Tarefas de deploy, infraestrutura e integração contínua"
-  }
-])
+  const [ tarefas, setTarefas ] = useState<Tarefa[]>()
+  const [ itens, setItens ] = useState<Item[]>()
   const [ tarefaSelecionada, setTarefaSelecionada ] = useState<Tarefa>()
+
+  async function buscarTarefas() {
+    try {
+      setTarefas([
+        {
+          id: 1,
+          titulo: "Implementar login",
+          descricao: "Criar autenticação com JWT",
+          tempoMaximoMinutos: 250,
+          status: "pendente",
+          responsavel_id: 1,
+          item_id: 0
+        },
+        {
+          id: 2,
+          titulo: "Criar tela de dashboard",
+          descricao: "Layout inicial com gráficos",
+          tempoMaximoMinutos: 140,
+          status: "em andamento",
+          responsavel_id: 2,
+          item_id: 1
+        },
+        {
+          id: 3,
+          titulo: "Configurar banco de dados",
+          tempoMaximoMinutos: 110,
+          status: "concluido",
+          responsavel_id: 1,
+          item_id: 2
+        },
+        {
+          id: 4,
+          titulo: "Implementar API de tarefas",
+          descricao: "CRUD completo de tarefas",
+          tempoMaximoMinutos: 150,
+          status: "pendente",
+          responsavel_id: 3,
+          item_id: 0
+        },
+        {
+          id: 5,
+          titulo: "Adicionar validações",
+          descricao: "Validar inputs no frontend",
+          tempoMaximoMinutos: 270,
+          status: "em andamento",
+          responsavel_id: 2,
+          item_id: 1
+        },
+        {
+          id: 6,
+          titulo: "Deploy da aplicação",
+          tempoMaximoMinutos: 37,
+          status: "pendente",
+          responsavel_id: 3,
+          item_id: 2
+        }
+      ])
+    } catch (error: any) {
+      console.error("Erro ao buscar tarefas")
+    }
+  }
+
+  async function buscarItens() {
+    if (!tarefas)
+      return
+
+    try {
+      const itens: Item[] = [
+        {
+          id: 0,
+          nome: "Sem item",
+          descricao: "Tarefas não relacionadas a um item"
+        },
+        {
+          id: 1,
+          nome: "Frontend",
+          descricao: "Tarefas relacionadas à interface do usuário e experiência"
+        },
+        {
+          id: 2,
+          nome: "DevOps",
+          descricao: "Tarefas de deploy, infraestrutura e integração contínua"
+        }
+      ]
+      setItens(itens.filter(item =>
+        tarefas.some(tarefa => tarefa.item_id == item.id)
+      ))
+    } catch (error: any) {
+      console.error("Erro ao buscar itens")
+    }
+  }
+
+  useEffect(() => {
+    buscarTarefas()
+  }, [])
+
+  useEffect(() => {
+    buscarItens()
+  }, [tarefas])
   
   return(
     <>
@@ -87,7 +117,7 @@ function ApontamentoTempo(){
           </div>
           <div className={`grow bg-mist-800 rounded-br-md rounded-tr-md`}>
             {tarefaSelecionada && (
-              <TarefasInfo tarefa={tarefaSelecionada} setTarefa={setTarefaSelecionada} />
+              <TarefasInfo tarefa={tarefaSelecionada} item={itens?.find((item) => item.id == tarefaSelecionada.item_id)} setTarefa={setTarefaSelecionada} />
             )}
           </div>
         </div>
