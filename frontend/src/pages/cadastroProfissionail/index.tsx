@@ -5,6 +5,7 @@ function CadastroProfissional() {
   const [email, setEmail] = useState("");
   const [cargo, setCargo] = useState("");
   const [projetosSelecionados, setProjetosSelecionados] = useState<number[]>([]);
+  const [buscaProjeto, setBuscaProjeto] = useState("");
 
   const [mensagem, setMensagem] = useState<{ tipo: "sucesso" | "erro"; texto: string } | null>(null);
 
@@ -13,6 +14,10 @@ function CadastroProfissional() {
     { id: 2, nome: "Projeto B" },
     { id: 3, nome: "Projeto C" }
   ];
+
+  const projetosFiltrados = projetos.filter((proj) =>
+    proj.nome.toLowerCase().includes(buscaProjeto.toLowerCase())
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,9 +28,7 @@ function CadastroProfissional() {
         texto: "Preencha todos os campos obrigatórios"
       });
 
-      setTimeout(() => {
-        setMensagem(null);
-      }, 3000);
+      setTimeout(() => setMensagem(null), 3000);
       return;
     }
 
@@ -44,17 +47,13 @@ function CadastroProfissional() {
         texto: "Profissional cadastrado com sucesso!"
       });
 
-
-      // limpar formulário
       setNome("");
       setEmail("");
       setCargo("");
       setProjetosSelecionados([]);
+      setBuscaProjeto("");
 
-      // sumir mensagem depois de 3s
-      setTimeout(() => {
-        setMensagem(null);
-      }, 3000);
+      setTimeout(() => setMensagem(null), 3000);
 
     } catch (error) {
       setMensagem({
@@ -73,7 +72,6 @@ function CadastroProfissional() {
 
       <div className="bg-[#252525] p-8 rounded-xl shadow-md">
 
-        {/* MENSAGEM */}
         {mensagem && (
           <div
             className={`mb-4 p-3 rounded-lg text-center font-medium
@@ -128,28 +126,48 @@ function CadastroProfissional() {
               Projetos vinculados (opcional)
             </label>
 
-            <select
-              multiple
-              value={projetosSelecionados}
-              onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions).map(opt => Number(opt.value));
-                setProjetosSelecionados(values);
-              }}
-              className="w-full mt-2 p-4 rounded-lg 
-                         bg-[#3e3e3e] border border-[#3e3e3e] 
-                         outline-none text-white h-40"
-            >
-              {projetos.map((proj) => (
-                <option key={proj.id} value={proj.id}>
-                  {proj.nome}
-                </option>
-              ))}
-            </select>
+            {/* Busca */}
+            <input
+              type="text"
+              placeholder="Buscar projeto..."
+              value={buscaProjeto}
+              onChange={(e) => setBuscaProjeto(e.target.value)}
+              className="w-full mt-2 p-3 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
+            />
 
-            <p className="text-xs text-gray-400 mt-1">
-              Segure Ctrl (ou Cmd) para selecionar mais de um projeto
-            </p>
-          </div>
+            {/* Lista com checkbox */}
+  <div className="mt-2 max-h-40 overflow-y-auto bg-[#3e3e3e] border border-[#3e3e3e] rounded-lg p-3 flex flex-col gap-2">
+
+    {projetosFiltrados.map((proj) => (
+      <label
+        key={proj.id}
+        className="flex items-center gap-3 text-white cursor-pointer hover:bg-[#4a4a4a] p-2 rounded"
+      >
+        <input
+          type="checkbox"
+          checked={projetosSelecionados.includes(proj.id)}
+          onChange={() => {
+            if (projetosSelecionados.includes(proj.id)) {
+              setProjetosSelecionados(
+                projetosSelecionados.filter(id => id !== proj.id)
+              );
+            } else {
+              setProjetosSelecionados([...projetosSelecionados, proj.id]);
+            }
+          }}
+          className="accent-purple-600"
+        />
+
+        {proj.nome}
+      </label>
+    ))}
+
+  </div>
+
+  <p className="text-xs text-gray-400 mt-1">
+    Você pode selecionar mais de um projeto
+  </p>
+</div>
 
           {/* Botão */}
           <button
