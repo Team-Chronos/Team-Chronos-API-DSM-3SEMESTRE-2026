@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 const Layout = lazy(() => import("../components/Layout"))
 const ApontamentoTempo = lazy(() => (import("../pages/ApontamentoTempo")))
+const DashboardPage = lazy(() => (import("../pages/Financeiro/FinanceiroPage")))
 
 const AppRoutes = createBrowserRouter([
     {
@@ -12,6 +13,10 @@ const AppRoutes = createBrowserRouter([
             {
                 path: "apontamento/tempo/",
                 element: <ApontamentoTempo />
+            },
+            {
+                path:"financeiro",
+                element: <DashboardPage/>
             }
         ]
     }
