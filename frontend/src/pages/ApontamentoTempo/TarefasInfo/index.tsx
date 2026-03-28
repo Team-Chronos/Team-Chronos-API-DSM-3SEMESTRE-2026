@@ -92,7 +92,7 @@ function TarefasInfo({ tarefa, item, setTarefa, reloadTarefas }: TarefasInfoProp
                                 </p>
                             )}
 
-                            <div>
+                            <div className={`w-full max-h-64 overflow-auto `}>
                                 <TabelaRegistroHoras registroHorasTarefa={registroHorasTarefa} />
                             </div>
                         </div>
