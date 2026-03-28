@@ -1,37 +1,24 @@
 import { Outlet } from "react-router-dom";
-
 function Layout() {
-  return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
-
-      {/* SIDEBAR */}
-      <aside className="w-20 bg-gray-800 flex flex-col items-center py-6 gap-6">
-
-        <div className="text-purple-500 text-xl">🏠</div>
-        <div className="text-gray-400 hover:text-white cursor-pointer">📊</div>
-        <div className="text-gray-400 hover:text-white cursor-pointer">📁</div>
-
-        <div className="mt-auto text-gray-400 hover:text-red-500 cursor-pointer">
-          ⏻
-        </div>
-      </aside>
-
-      {/* CONTEÚDO */}
-      <div className="flex-1 flex flex-col">
-
-        {/* MAIN CENTRALIZADO */}
-        <main className="flex-1 flex flex-col items-center justify-center p-6">
-          <Outlet />
-        </main>
-
-        {/* FOOTER */}
-        <footer className="h-10 bg-gray-800 flex items-center justify-center text-sm text-gray-400">
-          © 2026 Chronos
-        </footer>
-
-      </div>
+  return (<div className="flex min-h-screen bg-gray-900 text-white">
+    {/* SIDEBAR */}
+    <aside className="w-20 bg-gray-800 flex flex-col items-center py-6 gap-6">
+      <div className="text-purple-500 text-xl">🏠</div>
+      <div className="text-gray-400 hover:text-white cursor-pointer">📊</div>
+      <div className="text-gray-400 hover:text-white cursor-pointer">📁</div>
+      <div className="mt-auto text-gray-400 hover:text-red-500 cursor-pointer"> ⏻ </div>
+    </aside>
+    {/* CONTEÚDO */}
+    <div className="flex-1 flex flex-col">
+      {/* MAIN CENTRALIZADO */}
+      <main className="flex-1 flex flex-col items-center justify-center p-6">
+        <Outlet /> </main>
+      {/* FOOTER */}
+      <footer className="h-10 bg-gray-800 flex items-center justify-center text-sm text-gray-400">
+        © 2026 Chronos
+      </footer>
     </div>
+  </div>
   );
 }
-
 export default Layout;
