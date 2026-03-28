@@ -31,3 +31,22 @@ export interface ProfissionalGanhos {
   bonusAplicado: number;
   totalComBonus: number;
 }
+
+export interface ProjetoProfissionais {
+  usuarioId: number;
+  usuarioNome: string;
+  horasTrabalhadas: number;
+  valorHoraProjeto: number;
+  valorBaseCalculado: number;
+}
+
+export interface ProjetoDetalhe {
+  projetoId: number;
+  nomeProjeto: string;
+  tipoProjeto: string;
+  totalHoras: number;
+  custoTotal: number;
+  valorHoraProjeto: number;
+  totalProfissionais: number;
+  profissionais: ProjetoProfissionais[];
+}

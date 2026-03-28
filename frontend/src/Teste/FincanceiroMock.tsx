@@ -38,6 +38,13 @@ export const projetosMock: ProjetoFinanceiro[] = [
     totalHoras: 5,
     custoTotal: 600,
   },
+  {
+    projetoId: 5,
+    nomeProjeto: "Teste",
+    tipoProjeto: "Fechado",
+    totalHoras: 5,
+    custoTotal: 600,
+  }
 ];
 
 export const profissionaisMock: ProfissionalGanhos[] = [
@@ -52,6 +59,13 @@ export const profissionaisMock: ProfissionalGanhos[] = [
         valorHoraProjeto: 150,
         valorBaseCalculado: 600,
       },
+      {
+        projetoId: 5,
+        nomeProjeto: "Teste",
+        horasTrabalhadas: 6,
+        valorHoraProjeto: 150,
+        valorBaseCalculado: 600,
+      }
     ],
     totalSemBonus: 600,
     bonusAplicado: 0,

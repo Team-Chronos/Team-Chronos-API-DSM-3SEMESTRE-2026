@@ -1,8 +1,11 @@
 import IndicadoresGrid from "../../components/dashboard/IndicadoresGrid";
 import ListaProfissionais from "../../components/dashboard/ListaProfissionais";
 import ListaProjetos from "../../components/dashboard/ListaProjetos";
-import { dashboardMock, profissionaisMock, projetosMock } from "../../Teste/FincanceiroMock";
-
+import {
+  dashboardMock,
+  profissionaisMock,
+  projetosMock,
+} from "../../Teste/FincanceiroMock";
 
 function valorValido(valor: number): boolean {
   return Number.isFinite(valor);
@@ -31,7 +34,7 @@ function formatarInteiro(valor: number): string {
 
 export default function PaginaDashboardFinanceiro() {
   return (
-    <main className="min-h-screen bg-[#1b1b1f] text-white">
+    <section className="min-h-screen bg-[#1b1b1f] text-white">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-5">
@@ -90,6 +93,6 @@ export default function PaginaDashboardFinanceiro() {
           </aside>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
