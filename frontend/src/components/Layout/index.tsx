@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 function Layout() {
   return (
@@ -8,8 +8,24 @@ function Layout() {
       <aside className="w-20 bg-gray-800 flex flex-col items-center py-6 gap-6">
 
         <div className="text-purple-500 text-xl">🏠</div>
-        <div className="text-gray-400 hover:text-white cursor-pointer">📊</div>
-        <div className="text-gray-400 hover:text-white cursor-pointer">📁</div>
+        <NavLink
+          to="/profissionais"
+          className={({ isActive }) =>
+            isActive ? "text-white text-xl" : "text-gray-400 hover:text-white text-xl"
+          }
+          title="Cadastro de profissionais"
+        >
+          👤
+        </NavLink>
+        <NavLink
+          to="/associacoes"
+          className={({ isActive }) =>
+            isActive ? "text-white text-xl" : "text-gray-400 hover:text-white text-xl"
+          }
+          title="Associacao profissional/projeto"
+        >
+          🔗
+        </NavLink>
 
         <div className="mt-auto text-gray-400 hover:text-red-500 cursor-pointer">
           ⏻

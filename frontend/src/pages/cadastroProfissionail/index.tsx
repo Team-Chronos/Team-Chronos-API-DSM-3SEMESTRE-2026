@@ -1,50 +1,143 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  cadastrarProfissional,
+  listarProjetos,
+  type ProjetoDisponivel,
+  type ProjetoVinculoPayload,
+} from "../../services/profissionaisApi";
+
+const CARGOS = [
+  { id: 1, nome: "Desenvolvedor" },
+  { id: 2, nome: "Gerente" },
+  { id: 3, nome: "Financeiro" },
+];
 
 function CadastroProfissional() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [cargo, setCargo] = useState("");
+  const [senhaHash, setSenhaHash] = useState("");
+  const [cargoId, setCargoId] = useState("");
+  const [ativo, setAtivo] = useState(true);
 
   const [busca, setBusca] = useState("");
-  const [projetosSelecionados, setProjetosSelecionados] = useState<number[]>([]);
+  const [projetosDisponiveis, setProjetosDisponiveis] = useState<ProjetoDisponivel[]>([]);
+  const [projetosSelecionados, setProjetosSelecionados] = useState<Record<number, string>>({});
+  const [carregandoProjetos, setCarregandoProjetos] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
-  const projetos = [
-    { id: 1, nome: "Projeto A" },
-    { id: 2, nome: "Projeto B" },
-    { id: 3, nome: "Projeto C" }
-  ];
+  useEffect(() => {
+    const carregarProjetos = async () => {
+      setCarregandoProjetos(true);
+      setMensagem("");
 
-  // 🔍 Filtrar projetos
-  const projetosFiltrados = projetos.filter((proj) =>
-    proj.nome.toLowerCase().includes(busca.toLowerCase())
+      try {
+        const projetos = await listarProjetos();
+        setProjetosDisponiveis(projetos);
+      } catch (error) {
+        const mensagemErro =
+          error instanceof Error ? error.message : "Nao foi possivel carregar os projetos.";
+        setMensagem(mensagemErro);
+      } finally {
+        setCarregandoProjetos(false);
+      }
+    };
+
+    void carregarProjetos();
+  }, []);
+
+  const projetosFiltrados = useMemo(
+    () =>
+      projetosDisponiveis.filter((projeto) =>
+        `${projeto.nome} ${projeto.codigo}`.toLowerCase().includes(busca.toLowerCase())
+      ),
+    [busca, projetosDisponiveis]
   );
 
-  // ✅ Selecionar / desselecionar
   const toggleProjeto = (id: number) => {
-    if (projetosSelecionados.includes(id)) {
-      setProjetosSelecionados(projetosSelecionados.filter(p => p !== id));
+    if (projetosSelecionados[id] !== undefined) {
+      const copia = { ...projetosSelecionados };
+      delete copia[id];
+      setProjetosSelecionados(copia);
     } else {
-      setProjetosSelecionados([...projetosSelecionados, id]);
+      const projeto = projetosDisponiveis.find((item) => item.id === id);
+      setProjetosSelecionados({
+        ...projetosSelecionados,
+        [id]: projeto?.valorHoraBase?.toString() || "0",
+      });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const atualizarValorHoraProjeto = (projetoId: number, valor: string) => {
+    setProjetosSelecionados({
+      ...projetosSelecionados,
+      [projetoId]: valor,
+    });
+  };
 
-    if (!nome || !email || !cargo) {
-      alert("Preencha os campos obrigatórios");
+  const limparFormulario = () => {
+    setNome("");
+    setEmail("");
+    setSenhaHash("");
+    setCargoId("");
+    setAtivo(true);
+    setBusca("");
+    setProjetosSelecionados({});
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMensagem("");
+
+    if (!nome || !email || !senhaHash || !cargoId) {
+      setMensagem("Preencha os campos obrigatorios.");
       return;
     }
 
-    const dados = {
+    const cargoIdNumero = Number(cargoId);
+    if (!Number.isInteger(cargoIdNumero) || cargoIdNumero <= 0) {
+      setMensagem("Informe um cargo valido.");
+      return;
+    }
+
+    const projetosPayload: ProjetoVinculoPayload[] = Object.entries(projetosSelecionados).map(
+      ([projetoId, valorHora]) => ({
+        projetoId: Number(projetoId),
+        valorHora: Number(valorHora),
+      })
+    );
+
+    const projetoComValorInvalido = projetosPayload.find(
+      (projeto) => Number.isNaN(projeto.valorHora) || projeto.valorHora < 0
+    );
+
+    if (projetoComValorInvalido) {
+      setMensagem("Valor hora invalido em um dos projetos selecionados.");
+      return;
+    }
+
+    const payload = {
       nome,
       email,
-      cargo,
-      projetosIds: projetosSelecionados 
+      senhaHash,
+      ativo,
+      cargoId: cargoIdNumero,
+      projetos: projetosPayload,
     };
 
-    console.log(dados);
-    alert("Profissional cadastrado!");
+    try {
+      setSalvando(true);
+      const resposta = await cadastrarProfissional(payload);
+      const quantidadeProjetos = resposta.projetos?.length ?? 0;
+      setMensagem(`Profissional cadastrado com sucesso. Projetos vinculados: ${quantidadeProjetos}.`);
+      limparFormulario();
+    } catch (error) {
+      const mensagemErro =
+        error instanceof Error ? error.message : "Erro ao cadastrar profissional.";
+      setMensagem(mensagemErro);
+    } finally {
+      setSalvando(false);
+    }
   };
 
   return (
@@ -58,7 +151,12 @@ function CadastroProfissional() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-          {/* Nome **/}
+          {mensagem && (
+            <div className="rounded-lg bg-gray-700 border border-gray-600 p-3 text-sm">
+              {mensagem}
+            </div>
+          )}
+
           <div>
             <label className="text-sm text-gray-300">Nome *</label>
             <input
@@ -69,7 +167,6 @@ function CadastroProfissional() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="text-sm text-gray-300">Email *</label>
             <input
@@ -80,24 +177,46 @@ function CadastroProfissional() {
             />
           </div>
 
-          {/* Cargo */}
           <div>
-            <label className="text-sm text-gray-300">Cargo *</label>
+            <label className="text-sm text-gray-300">Senha *</label>
             <input
-              type="text"
-              value={cargo}
-              onChange={(e) => setCargo(e.target.value)}
+              type="password"
+              value={senhaHash}
+              onChange={(e) => setSenhaHash(e.target.value)}
               className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
             />
           </div>
 
-          {/* Projetos (OPCIONAL) */}
+          <div>
+            <label className="text-sm text-gray-300">Cargo *</label>
+            <select
+              value={cargoId}
+              onChange={(e) => setCargoId(e.target.value)}
+              className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
+            >
+              <option value="">Selecione um cargo</option>
+              {CARGOS.map((cargo) => (
+                <option key={cargo.id} value={cargo.id}>
+                  {cargo.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <label className="flex items-center gap-3 text-sm text-gray-300">
+            <input
+              type="checkbox"
+              checked={ativo}
+              onChange={(e) => setAtivo(e.target.checked)}
+            />
+            Profissional ativo
+          </label>
+
           <div>
             <label className="text-sm text-gray-300">
               Projetos vinculados (opcional)
             </label>
 
-            {/* Busca */}
             <input
               type="text"
               placeholder="Buscar projeto..."
@@ -106,29 +225,51 @@ function CadastroProfissional() {
               className="w-full mt-2 mb-3 p-3 rounded-lg bg-gray-700 border border-gray-600 outline-none"
             />
 
-            {/* Lista */}
             <div className="max-h-40 overflow-y-auto flex flex-col gap-2">
+              {carregandoProjetos && (
+                <p className="text-sm text-gray-300">Carregando projetos...</p>
+              )}
 
-              {projetosFiltrados.map((proj) => (
-                <label
-                  key={proj.id}
-                  className="flex items-center gap-2 bg-gray-700 p-2 rounded-lg cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={projetosSelecionados.includes(proj.id)}
-                    onChange={() => toggleProjeto(proj.id)}
-                  />
-                  {proj.nome}
-                </label>
-              ))}
+              {!carregandoProjetos && projetosFiltrados.length === 0 && (
+                <p className="text-sm text-gray-300">Nenhum projeto encontrado.</p>
+              )}
 
+              {projetosFiltrados.map((projeto) => {
+                const selecionado = projetosSelecionados[projeto.id] !== undefined;
+
+                return (
+                  <div key={projeto.id} className="bg-gray-700 p-2 rounded-lg">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selecionado}
+                        onChange={() => toggleProjeto(projeto.id)}
+                      />
+                      <span>{projeto.nome} ({projeto.codigo})</span>
+                    </label>
+
+                    {selecionado && (
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={projetosSelecionados[projeto.id]}
+                        onChange={(e) => atualizarValorHoraProjeto(projeto.id, e.target.value)}
+                        className="w-full mt-2 p-2 rounded-lg bg-gray-800 border border-gray-600 outline-none"
+                        placeholder="Valor/hora"
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Botão */}
-          <button className="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg font-semibold">
-            Cadastrar
+          <button
+            className="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg font-semibold disabled:opacity-60"
+            disabled={salvando}
+          >
+            {salvando ? "Salvando..." : "Cadastrar"}
           </button>
 
         </form>

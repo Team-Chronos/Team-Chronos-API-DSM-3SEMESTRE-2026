@@ -1,6 +1,7 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import CadastroProfissional  from "../pages/cadastroProfissionail";
+import AssociacaoProfissionalProjeto from "../pages/associacaoProfissionalProjeto";
 
 const Layout = lazy(() => import("../components/Layout"))
 
@@ -10,8 +11,16 @@ const AppRoutes = createBrowserRouter([
         element: <Layout />,
         children: [
             {
+                index: true,
+                element: <Navigate to="/profissionais" replace />
+            },
+            {
                 path: "profissionais",
                 element: <CadastroProfissional />
+            },
+            {
+                path: "associacoes",
+                element: <AssociacaoProfissionalProjeto />
             }
         ]
     }
