@@ -76,8 +76,8 @@ function CardMetrica({
     <div
       className={
         destaque
-          ? "rounded-[24px] bg-gradient-to-r from-[#6627cc] via-[#5b21b6] to-[#4a1898] p-5 ring-1 ring-violet-400/20"
-          : "rounded-[24px] bg-[#4a4a4f] p-5"
+          ? "rounded-[15px] bg-gradient-to-r from-[#6627cc] via-[#5b21b6] to-[#4a1898] p-5 ring-1 ring-violet-400/20"
+          : "rounded-[15px] bg-[#4a4a4f] p-5"
       }
     >
       <p className="text-sm text-white/65">{titulo}</p>
@@ -136,7 +136,7 @@ export default function ModalDetalheProjeto({
             valor={formatarMoeda(projeto.custoTotal)}
             destaque
           />
-          <div className="rounded-[24px] bg-[#4a4a4f] p-5">
+          <div className="rounded-[15px] bg-[#4a4a4f] p-5">
             <p className="text-sm text-white/65">Profissional destaque</p>
             <p className="mt-4 break-words text-2xl font-semibold leading-tight text-white">
               {profissionalPrincipal ? profissionalPrincipal.usuarioNome : "--"}
@@ -151,7 +151,7 @@ export default function ModalDetalheProjeto({
         </div>
 
         <div className="space-y-5">
-          <section className="rounded-[24px] bg-[#2c2c31] p-5">
+          <section className="rounded-[15px] bg-[#2c2c31] p-5">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300/85">
@@ -192,7 +192,7 @@ export default function ModalDetalheProjeto({
             </div>
           </section>
 
-          <section className="rounded-[24px] bg-[#2c2c31] p-5">
+          <section className="rounded-[15px] bg-[#2c2c31] p-5">
             <div className="mb-5">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300/85">
                 Produtividade
@@ -212,7 +212,7 @@ export default function ModalDetalheProjeto({
                 return (
                   <div
                     key={profissional.usuarioId}
-                    className="rounded-[20px] bg-[#54545a] p-4"
+                    className="rounded-[15px] bg-[#54545a] p-4"
                   >
                     <div className="mb-3 flex items-center justify-between gap-4">
                       <div className="min-w-0">
@@ -250,14 +250,14 @@ export default function ModalDetalheProjeto({
           </section>
         </div>
 
-        <section className="rounded-[24px] bg-[#3f3f44] p-5">
+        <section className="rounded-[15px] bg-[#3f3f44] p-5">
           <h3 className="text-2xl font-semibold text-white">Equipe</h3>
 
           <div className="mt-5 max-h-[520px] space-y-4 overflow-y-auto pr-1">
             {profissionais.map((profissional) => (
               <div
                 key={profissional.usuarioId}
-                className="rounded-[20px] bg-[#54545a] p-4"
+                className="rounded-[15px] bg-[#54545a] p-4"
               >
                 <p className="text-lg font-semibold text-white">
                   {profissional.usuarioNome}

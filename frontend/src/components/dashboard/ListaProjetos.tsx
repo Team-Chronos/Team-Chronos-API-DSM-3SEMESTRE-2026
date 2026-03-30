@@ -71,7 +71,7 @@ export default function ListaProjetos({ projetos }: ListaProjetosProps) {
 
   return (
     <>
-      <section className="rounded-[28px] bg-[#232329] p-5">
+      <section className="rounded-[15px] bg-[#232329] p-5">
         <div className="mb-4 px-2">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-4">
@@ -147,7 +147,7 @@ export default function ListaProjetos({ projetos }: ListaProjetosProps) {
                 <button
                   key={projeto.projetoId}
                   type="button"
-                  className="block w-full rounded-[24px] bg-[#54545a] p-6 text-left transition hover:bg-[#5c5c63]"
+                  className="block w-full rounded-[15px] bg-[#54545a] p-6 text-left transition hover:bg-[#5c5c63]"
                   onClick={() => void abrirDetalheProjeto(projeto.projetoId)}
                   disabled={carregandoProjetoId === projeto.projetoId}
                 >

@@ -41,18 +41,18 @@ export default function FinanceiroPage() {
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={index}
-                className="h-44 animate-pulse rounded-[28px] bg-[#232329]"
+                className="h-44 animate-pulse rounded-[15px] bg-[#232329]"
               />
             ))}
           </div>
 
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="grid gap-5 md:grid-cols-2">
-              <div className="h-[620px] animate-pulse rounded-[28px] bg-[#232329]" />
-              <div className="h-[620px] animate-pulse rounded-[28px] bg-[#232329]" />
+              <div className="h-[620px] animate-pulse rounded-[15px] bg-[#232329]" />
+              <div className="h-[620px] animate-pulse rounded-[15px] bg-[#232329]" />
             </div>
 
-            <div className="h-[681px] animate-pulse rounded-[28px] bg-[#5b21b6]" />
+            <div className="h-[681px] animate-pulse rounded-[15px] bg-[#5b21b6]" />
           </div>
         </div>
       </section>
@@ -94,7 +94,7 @@ export default function FinanceiroPage() {
             </section>
           </div>
 
-          <aside className="h-[681px] rounded-[28px] bg-gradient-to-b from-[#6627cc] to-[#4a1898] px-8 py-9 shadow-[0_20px_60px_rgba(76,29,149,0.35)]">
+          <aside className="h-[681px] rounded-[15px] bg-gradient-to-b from-[#6627cc] to-[#4a1898] px-8 py-9 shadow-[0_20px_60px_rgba(76,29,149,0.35)]">
             <div className="flex h-full flex-col justify-start gap-16">
               <div>
                 <p className="text-[15px] font-medium text-white/85">

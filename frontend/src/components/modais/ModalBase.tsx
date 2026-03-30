@@ -53,7 +53,7 @@ export default function ModalBase({
       <div
         className={`relative z-10 w-full ${larguraClasse} animate-[modalFadeIn_0.22s_ease-out]`}
       >
-        <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[#232329] shadow-[0_25px_80px_rgba(0,0,0,0.45)]">
+        <div className="overflow-hidden rounded-[15px] border border-white/10 bg-[#232329] shadow-[0_25px_80px_rgba(0,0,0,0.45)]">
           <div className="relative border-b border-white/8 bg-gradient-to-r from-[#6627cc] via-[#5b21b6] to-[#4a1898] px-6 py-6 sm:px-8">
             <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
             <div className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-white/15" />

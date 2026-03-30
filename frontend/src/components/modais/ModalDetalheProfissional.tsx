@@ -85,8 +85,8 @@ function CardMetrica({
     <div
       className={
         destaque
-          ? "rounded-[24px] bg-gradient-to-r from-[#6627cc] via-[#5b21b6] to-[#4a1898] p-5 ring-1 ring-violet-400/20"
-          : "rounded-[24px] bg-[#4a4a4f] p-5"
+          ? "rounded-[15px] bg-gradient-to-r from-[#6627cc] via-[#5b21b6] to-[#4a1898] p-5 ring-1 ring-violet-400/20"
+          : "rounded-[15px] bg-[#4a4a4f] p-5"
       }
     >
       <p className="text-sm text-white/65">{titulo}</p>
@@ -144,7 +144,7 @@ export default function ModalDetalheProfissional({
         </div>
 
         <div className="space-y-5">
-          <section className="rounded-[24px] bg-[#2c2c31] p-5">
+          <section className="rounded-[15px] bg-[#2c2c31] p-5">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300/85">
@@ -184,7 +184,7 @@ export default function ModalDetalheProfissional({
             </div>
           </section>
 
-          <section className="rounded-[24px] bg-[#2c2c31] p-5">
+          <section className="rounded-[15px] bg-[#2c2c31] p-5">
             <div className="mb-5">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300/85">
                 Distribuição por projeto
@@ -204,7 +204,7 @@ export default function ModalDetalheProfissional({
                 return (
                   <div
                     key={projeto.projetoId}
-                    className="rounded-[20px] bg-[#54545a] p-4"
+                    className="rounded-[15px] bg-[#54545a] p-4"
                   >
                     <div className="mb-3 flex items-center justify-between gap-4">
                       <div className="min-w-0">
@@ -242,14 +242,14 @@ export default function ModalDetalheProfissional({
           </section>
         </div>
 
-        <section className="rounded-[24px] bg-[#3f3f44] p-5">
+        <section className="rounded-[15px] bg-[#3f3f44] p-5">
           <h3 className="text-2xl font-semibold text-white">Projetos</h3>
 
           <div className="mt-5 max-h-[520px] space-y-4 overflow-y-auto pr-1">
             {profissional.projetos.map((projeto) => (
               <div
                 key={`${profissional.usuarioId}-${projeto.projetoId}`}
-                className="rounded-[20px] bg-[#54545a] p-4"
+                className="rounded-[15px] bg-[#54545a] p-4"
               >
                 <p className="text-lg font-semibold text-white">
                   {projeto.nomeProjeto}

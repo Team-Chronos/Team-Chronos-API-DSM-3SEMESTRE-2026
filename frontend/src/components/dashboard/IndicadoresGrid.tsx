@@ -21,7 +21,7 @@ function CardResumo({ titulo, valor }: CardResumoProps) {
   const temValor = valorValido(valor);
 
   return (
-    <div className="rounded-[28px] bg-[#232329] px-7 py-7">
+    <div className="rounded-[15px] bg-[#232329] px-7 py-7">
       <p className="text-[15px] text-white/75">{titulo}</p>
 
       <p className="mt-10 text-6xl font-semibold leading-none text-white">
