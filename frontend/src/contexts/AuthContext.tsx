@@ -9,23 +9,54 @@ type AuthContextType = {
   logout: () => void
 }
 
+type LoginResponse = {
+  token: string
+}
+
+function getDefaultApiUrl(): string {
+  if (import.meta.env.DEV) {
+    return "/api"
+  }
+
+  const host = window.location.hostname
+
+  if (host.endsWith(".app.github.dev")) {
+    return `${window.location.protocol}//${host.replace(/-\d+\.app\.github\.dev$/, "-8081.app.github.dev")}`
+  }
+
+  return "http://localhost:8081"
+}
+
+const RAW_API_URL = import.meta.env.VITE_LOGIN_API_URL ?? getDefaultApiUrl()
+const API_URL = RAW_API_URL.trim().replace(/\/+$/, "")
+
+function getLoginUrl(apiUrl: string): string {
+  if (apiUrl.endsWith("/api")) {
+    return `${apiUrl}/auth/login`
+  }
+
+  return `${apiUrl}/api/auth/login`
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: ReactNode}){
-  const [ user, setUser ] = useState<User>()
-  const [ loading, setLoading ] = useState<boolean>(true)
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User>()
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (!token) return
+
+    if (!token) {
+      setLoading(false)
+      return
+    }
 
     try {
       const decodedUser = jwtDecode<User>(token)
       setUser(decodedUser)
-
     } catch (error: any) {
-      console.error("Token inválido")
-
+      console.error("Token invalido")
       localStorage.removeItem("token")
       setUser(undefined)
     }
@@ -33,25 +64,35 @@ export function AuthProvider({ children }: { children: ReactNode}){
     setLoading(false)
   }, [])
 
-  async function login (email: string, senha: string): Promise<boolean>{
-    let decodedUser: User
-
+  async function login(email: string, senha: string): Promise<boolean> {
     try {
-      // fazer a requisição passando o email e a senha para pegar o token
-      const token = 'abacaxi verde semi descascado'
-      
-      localStorage.setItem("token", token)
-      decodedUser = jwtDecode<User>(token)
+      const normalizedEmail = email.trim().toLowerCase()
+
+      const response = await fetch(getLoginUrl(API_URL), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: normalizedEmail, senha })
+      })
+
+      if (!response.ok) {
+        return false
+      }
+
+      const data = await response.json() as LoginResponse
+      localStorage.setItem("token", data.token)
+
+      const decodedUser = jwtDecode<User>(data.token)
       setUser(decodedUser)
       return true
-
     } catch (error: any) {
-      console.log("Erro no login")
+      console.log("Erro no login", error)
       return false
     }
   }
 
-  function logout (){
+  function logout() {
     localStorage.removeItem("token")
     setUser(undefined)
   }
@@ -63,8 +104,8 @@ export function AuthProvider({ children }: { children: ReactNode}){
   )
 }
 
-export function useAuth(){
+export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth deve ser usado dentro de um AuthProvider')
+  if (!context) throw new Error("useAuth deve ser usado dentro de um AuthProvider")
   return context
 }
