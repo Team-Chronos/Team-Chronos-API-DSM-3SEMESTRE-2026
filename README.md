@@ -5,6 +5,7 @@
 <h2 align="center"> Chronos </h2>
 
 <p align="center">
+  <a href ="#dor">Dor do cliente</a>  |
   <a href ="#desafio">Desafio</a>  |
   <a href ="#solucao">Solução</a>  |   
   <a href ="#backlog">Backlog do Produto</a>  |
@@ -22,6 +23,10 @@
 > Documentação: [Documentação das Sprints](https://docs.google.com/document/d/1O_trfXtQ8lO5D2ksU1aD-819RmUyD9XAhrF1bne7AYY/edit?usp=sharing)
 > 
 > Video do Projeto: Indisponível 📽️
+
+## 😢 Dor do Cliente <a id="dor"></a>
+
+O principal dor do cliente está na dificuldade de organizar e gerir a equipe de forma eficiente diante do crescente volume de demandas. A falta de um processo centralizado e a lentidão no fluxo de informações geram gargalos operacionais que quebram a dinâmica do trabalho diário. Essa dispersão não apenas prejudica a autonomia dos colaboradores, mas também tira dos gestores a visibilidade clara sobre o esforço e a capacidade da equipe, reduzindo drasticamente a produtividade geral e impedindo o negócio de escalar seus resultados.
 
 ## 🏅 Desafio <a id="desafio"></a>
 
@@ -105,6 +110,7 @@ A plataforma substituirá registros dispersos, como planilhas, mensagens e anota
  <a href="https://github.com/"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/></a>
  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-white?style=for-the-badge&logo=react&logoColor=white&color=%23087ea4"/></a>
   <a href="https://www.java.com/"><img src="https://img.shields.io/badge/Java-white?style=for-the-badge&logo=openjdk&logoColor=white&color=%23ED8B00"/></a>
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-white?style=for-the-badge&logo=springboot&logoColor=white&color=%236DB33F"/></a>
 </h4>
 
 ## 🎓 Equipe <a id="equipe"></a>
