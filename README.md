@@ -19,7 +19,7 @@
 
 > Status do Projeto: Em andamento ⏳ 
 >
-> Pasta de Documentação: [Documentação das Sprints](https://github.com/Team-Chronos/API-DSM-3SEMESTRE-2026/tree/main/docs)
+> Documentação: [Documentação das Sprints](https://docs.google.com/document/d/1O_trfXtQ8lO5D2ksU1aD-819RmUyD9XAhrF1bne7AYY/edit?usp=sharing)
 > 
 > Video do Projeto: Indisponível 📽️
 
@@ -81,7 +81,7 @@ A plataforma substituirá registros dispersos, como planilhas, mensagens e anota
 
 ## 🚀 Estratégia de Branch <a id="branch"></a>
 
-[Documentação da Estrátegia de Branch](https://github.com/Team-Chronos/API-DSM-3SEMESTRE-2026/blob/main/docs/Documentação%20da%20Estratégia%20de%20Branches%20-%20Equipe%20Chronos.pdf)
+[Documentação da Estrátegia de Branch](https://docs.google.com/document/d/1O_trfXtQ8lO5D2ksU1aD-819RmUyD9XAhrF1bne7AYY/edit?usp=sharing)
 
 ## 📅 Cronograma de Sprints <a id="sprint"></a>
 
