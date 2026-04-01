@@ -11,6 +11,7 @@
   <a href ="#backlog">Backlog do Produto</a>  |
   <a href ="#dor">DoR</a>  |
   <a href ="#dod">DoD</a>  |
+  <a href ="#requisitos">Requisitos</a>  |
   <a href ="#instalacao">Manual de Instalação</a> |
   <a href ="#branch">Estratégia de Branch</a>  |
   <a href ="#sprint">Cronograma de Sprints</a>  |
@@ -83,6 +84,28 @@ A plataforma substituirá registros dispersos, como planilhas, mensagens e anota
 
 ---
 
+## 📝 Requesitos <a id="requisitos"></a>
+**:link: Clique no link abaixo para visualizar os requisitos em documentos:** 
+> [Requisitos](https://docs.google.com/document/d/1O_trfXtQ8lO5D2ksU1aD-819RmUyD9XAhrF1bne7AYY/edit?tab=t.lxgjjl15qtax)
+
+## 🎯 Requisitos Funcionais(RF)
+
+* **RF01** - Gestão de Projetos: O sistema deve permitir o cadastro, edição e inativação de projetos, categorizando-os obrigatoriamente como "Alocação" ou "Hora Fechada".
+* **RF02** - Estruturação de Tarefas: O sistema deve permitir a criação de uma hierarquia de "Itens" e "Atividades" dentro de cada projeto.
+* **RF03** - Controle de Acessos e Perfis: O sistema deve permitir o cadastro de usuários com diferentes níveis de permissão (ex: Desenvolvedor, Gestor, Financeiro, Administrador) e vinculá-los aos projetos.
+* **RF04** - Apontamento de Horas: O sistema deve prover uma interface para que os profissionais registrem suas horas trabalhadas informando a data, projeto, item, atividade e uma descrição opcional.
+* **RF05** - Relatórios: O sistema deve gerar relatórios consolidados de horas consumidas e faturamento, permitindo a aplicação de filtros por data, projeto e profissional, com opção de exportação de dados.
+* **RF06** - Dashboard de Gestão: O sistema deve exibir um painel centralizado para gestores contendo indicadores de saúde do projeto, totalizadores financeiros e alertas de capacidade da equipe.
+
+## 🎯 Requisitos Não Funcionais(RNF)
+* **RNF01** - Performance (Tempo de Resposta): O sistema deve processar e carregar as telas de apontamento de horas e dashboards em um tempo máximo de 3 segundos em condições normais de rede, garantindo a fluidez do trabalho diário. (Ataca a dor da lentidão)
+* **RNF02** - Escalabilidade: A arquitetura do sistema deve suportar o crescimento do volume de dados e o acesso simultâneo de múltiplos usuários (ex: 500 conexões simultâneas) sem degradação perceptível da performance. (Ataca a dor de não suportar a demanda)
+* **RNF03** - Usabilidade (Eficiência): A interface de apontamento de horas deve ser intuitiva e otimizada, permitindo que o usuário realize seu registro diário com o menor número de cliques possível (ex: máximo de 3 cliques após o login). (Ataca a dor da falta de autonomia e ferramentas dispersas)
+* **RNF04** - Segurança e Privacidade: Dados sensíveis de custos, valores hora e faturamento devem ser criptografados no banco de dados e visíveis exclusivamente para os perfis de Gestor, Administrador e Financeiro.
+* **RNF05** - Rastreabilidade (Auditoria): O sistema deve registrar logs de todas as alterações críticas, como edição de valores financeiros ou exclusão de horas já apontadas, identificando o usuário e a data da ação.
+
+---
+
 ## Manual de Instalação <a id="instalacao"></a>
 
 🚧 Pendente – Atualizando
@@ -117,6 +140,7 @@ A plataforma substituirá registros dispersos, como planilhas, mensagens e anota
  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-white?style=for-the-badge&logo=react&logoColor=white&color=%23087ea4"/></a>
   <a href="https://www.java.com/"><img src="https://img.shields.io/badge/Java-white?style=for-the-badge&logo=openjdk&logoColor=white&color=%23ED8B00"/></a>
   <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-white?style=for-the-badge&logo=springboot&logoColor=white&color=%236DB33F"/></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-white?style=for-the-badge&logo=tailwind-css&logoColor=white&color=%2306B6D4"/></a>
 </h4>
 
 ## 🎓 Equipe <a id="equipe"></a>
