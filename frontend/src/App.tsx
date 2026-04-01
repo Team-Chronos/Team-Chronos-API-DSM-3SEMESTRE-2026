@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, RouterProvider } from "react-router-dom";
+import AppRoutes from './routes/AppRoutes'
+import { AuthProvider } from './contexts/AuthContext'
 
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./components/pages/Dashboard";
@@ -7,15 +9,10 @@ import Projetos from "./components/pages/Projetos";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="usuarios" element={<Usuarios />} />
-          <Route path="projetos" element={<Projetos />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+    <AuthProvider>
+      <RouterProvider router={AppRoutes} />
+    </AuthProvider>
+  )
 }
+
+export default App
