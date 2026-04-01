@@ -6,6 +6,7 @@ import GestaoProfissionais from "../pages/gestaoDeProfissionais";
 import Login from "../pages/login";
 
 const Layout = lazy(() => import("../components/layout"))
+const DashboardPage = lazy(() => (import("../pages/Financeiro/FinanceiroPage")))
 
 const AppRoutes = createBrowserRouter([{
     path: "/",
@@ -32,12 +33,13 @@ const AppRoutes = createBrowserRouter([{
             path: "/gestao-profissionais",
             element: <GestaoProfissionais />
         },
+        {
+                path:"financeiro",
+                element: <DashboardPage/>
+        }
     ]
 },
 {
     path: "/login",
     element: <Login />
 }
-])
-
-export default AppRoutes
