@@ -1,65 +1,142 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  cadastrarProfissional,
+  listarProjetos,
+  type ProjetoDisponivel,
+  type ProjetoVinculoPayload,
+} from "../../services/profissionaisApi";
+
+const CARGOS = [
+  { id: 1, nome: "Desenvolvedor" },
+  { id: 2, nome: "Gerente" },
+  { id: 3, nome: "Financeiro" },
+];
 
 function CadastroProfissional() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [projetosSelecionados, setProjetosSelecionados] = useState<number[]>([]);
-  const [buscaProjeto, setBuscaProjeto] = useState("");
+  const [senhaHash, setSenhaHash] = useState("");
+  const [cargoId, setCargoId] = useState("");
+  const [ativo, setAtivo] = useState(true);
 
-  const [mensagem, setMensagem] = useState<{ tipo: "sucesso" | "erro"; texto: string } | null>(null);
+  const [busca, setBusca] = useState("");
+  const [projetosDisponiveis, setProjetosDisponiveis] = useState<ProjetoDisponivel[]>([]);
+  const [projetosSelecionados, setProjetosSelecionados] = useState<Record<number, string>>({});
+  const [carregandoProjetos, setCarregandoProjetos] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
-  const projetos = [
-    { id: 1, nome: "Projeto A" },
-    { id: 2, nome: "Projeto B" },
-    { id: 3, nome: "Projeto C" }
-  ];
+  useEffect(() => {
+    const carregarProjetos = async () => {
+      setCarregandoProjetos(true);
+      setMensagem("");
 
-  const projetosFiltrados = projetos.filter((proj) =>
-    proj.nome.toLowerCase().includes(buscaProjeto.toLowerCase())
+      try {
+        const projetos = await listarProjetos();
+        setProjetosDisponiveis(projetos);
+      } catch (error) {
+        const mensagemErro =
+          error instanceof Error ? error.message : "Nao foi possivel carregar os projetos.";
+        setMensagem(mensagemErro);
+      } finally {
+        setCarregandoProjetos(false);
+      }
+    };
+
+    void carregarProjetos();
+  }, []);
+
+  const projetosFiltrados = useMemo(
+    () =>
+      projetosDisponiveis.filter((projeto) =>
+        `${projeto.nome} ${projeto.codigo}`.toLowerCase().includes(busca.toLowerCase())
+      ),
+    [busca, projetosDisponiveis]
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!nome || !email || !cargo) {
-      setMensagem({
-        tipo: "erro",
-        texto: "Preencha todos os campos obrigatórios"
+  const toggleProjeto = (id: number) => {
+    if (projetosSelecionados[id] !== undefined) {
+      const copia = { ...projetosSelecionados };
+      delete copia[id];
+      setProjetosSelecionados(copia);
+    } else {
+      const projeto = projetosDisponiveis.find((item) => item.id === id);
+      setProjetosSelecionados({
+        ...projetosSelecionados,
+        [id]: projeto?.valorHoraBase?.toString() || "0",
       });
+    }
+  };
 
-      setTimeout(() => setMensagem(null), 3000);
+  const atualizarValorHoraProjeto = (projetoId: number, valor: string) => {
+    setProjetosSelecionados({
+      ...projetosSelecionados,
+      [projetoId]: valor,
+    });
+  };
+
+  const limparFormulario = () => {
+    setNome("");
+    setEmail("");
+    setSenhaHash("");
+    setCargoId("");
+    setAtivo(true);
+    setBusca("");
+    setProjetosSelecionados({});
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMensagem("");
+
+    if (!nome || !email || !senhaHash || !cargoId) {
+      setMensagem("Preencha os campos obrigatorios.");
       return;
     }
 
+    const cargoIdNumero = Number(cargoId);
+    if (!Number.isInteger(cargoIdNumero) || cargoIdNumero <= 0) {
+      setMensagem("Informe um cargo valido.");
+      return;
+    }
+
+    const projetosPayload: ProjetoVinculoPayload[] = Object.entries(projetosSelecionados).map(
+      ([projetoId, valorHora]) => ({
+        projetoId: Number(projetoId),
+        valorHora: Number(valorHora),
+      })
+    );
+
+    const projetoComValorInvalido = projetosPayload.find(
+      (projeto) => Number.isNaN(projeto.valorHora) || projeto.valorHora < 0
+    );
+
+    if (projetoComValorInvalido) {
+      setMensagem("Valor hora invalido em um dos projetos selecionados.");
+      return;
+    }
+
+    const payload = {
+      nome,
+      email,
+      senhaHash,
+      ativo,
+      cargoId: cargoIdNumero,
+      projetos: projetosPayload,
+    };
+
     try {
-      const dados = {
-        nome,
-        email,
-        cargo,
-        projetosIds: projetosSelecionados
-      };
-
-      console.log(dados);
-
-      setMensagem({
-        tipo: "sucesso",
-        texto: "Profissional cadastrado com sucesso!"
-      });
-
-      setNome("");
-      setEmail("");
-      setCargo("");
-      setProjetosSelecionados([]);
-      setBuscaProjeto("");
-
-      setTimeout(() => setMensagem(null), 3000);
-
+      setSalvando(true);
+      const resposta = await cadastrarProfissional(payload);
+      const quantidadeProjetos = resposta.projetos?.length ?? 0;
+      setMensagem(`Profissional cadastrado com sucesso. Projetos vinculados: ${quantidadeProjetos}.`);
+      limparFormulario();
     } catch (error) {
-      setMensagem({
-        tipo: "erro",
-        texto: "Erro ao cadastrar profissional"
-      });
+      const mensagemErro =
+        error instanceof Error ? error.message : "Erro ao cadastrar profissional.";
+      setMensagem(mensagemErro);
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -72,21 +149,14 @@ function CadastroProfissional() {
 
       <div className="bg-[#252525] p-8 rounded-xl shadow-md">
 
-        {mensagem && (
-          <div
-            className={`mb-4 p-3 rounded-lg text-center font-medium
-              ${mensagem.tipo === "sucesso"
-                ? "bg-green-600/20 text-green-400 border border-green-500"
-                : "bg-red-600/20 text-red-400 border border-red-500"
-              }`}
-          >
-            {mensagem.texto}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-          {/* Nome */}
+          {mensagem && (
+            <div className="rounded-lg bg-gray-700 border border-gray-600 p-3 text-sm">
+              {mensagem}
+            </div>
+          )}
+
           <div>
             <label className="text-sm text-gray-300">Nome *</label>
             <input
@@ -97,7 +167,6 @@ function CadastroProfissional() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="text-sm text-gray-300">Email *</label>
             <input
@@ -108,75 +177,99 @@ function CadastroProfissional() {
             />
           </div>
 
-          {/* Cargo */}
           <div>
-            <label className="text-sm text-gray-300">Cargo *</label>
+            <label className="text-sm text-gray-300">Senha *</label>
             <input
-              type="text"
-              value={cargo}
-              onChange={(e) => setCargo(e.target.value)}
-              className="w-full mt-2 p-4 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
-              placeholder="Ex: Desenvolvedor, QA, PO"
+              type="password"
+              value={senhaHash}
+              onChange={(e) => setSenhaHash(e.target.value)}
+              className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
             />
           </div>
 
-          {/* Projetos */}
+          <div>
+            <label className="text-sm text-gray-300">Cargo *</label>
+            <select
+              value={cargoId}
+              onChange={(e) => setCargoId(e.target.value)}
+              className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
+            >
+              <option value="">Selecione um cargo</option>
+              {CARGOS.map((cargo) => (
+                <option key={cargo.id} value={cargo.id}>
+                  {cargo.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <label className="flex items-center gap-3 text-sm text-gray-300">
+            <input
+              type="checkbox"
+              checked={ativo}
+              onChange={(e) => setAtivo(e.target.checked)}
+            />
+            Profissional ativo
+          </label>
+
           <div>
             <label className="text-sm text-gray-300">
               Projetos vinculados (opcional)
             </label>
 
-            {/* Busca */}
             <input
               type="text"
               placeholder="Buscar projeto..."
-              value={buscaProjeto}
-              onChange={(e) => setBuscaProjeto(e.target.value)}
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
               className="w-full mt-2 p-3 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
             />
 
-            {/* Lista com checkbox */}
-  <div className="mt-2 max-h-40 overflow-y-auto bg-[#3e3e3e] border border-[#3e3e3e] rounded-lg p-3 flex flex-col gap-2">
+            <div className="max-h-40 overflow-y-auto flex flex-col gap-2">
+              {carregandoProjetos && (
+                <p className="text-sm text-gray-300">Carregando projetos...</p>
+              )}
 
-    {projetosFiltrados.map((proj) => (
-      <label
-        key={proj.id}
-        className="flex items-center gap-3 text-white cursor-pointer hover:bg-[#4a4a4a] p-2 rounded"
-      >
-        <input
-          type="checkbox"
-          checked={projetosSelecionados.includes(proj.id)}
-          onChange={() => {
-            if (projetosSelecionados.includes(proj.id)) {
-              setProjetosSelecionados(
-                projetosSelecionados.filter(id => id !== proj.id)
-              );
-            } else {
-              setProjetosSelecionados([...projetosSelecionados, proj.id]);
-            }
-          }}
-          className="accent-purple-600"
-        />
+              {!carregandoProjetos && projetosFiltrados.length === 0 && (
+                <p className="text-sm text-gray-300">Nenhum projeto encontrado.</p>
+              )}
 
-        {proj.nome}
-      </label>
-    ))}
+              {projetosFiltrados.map((projeto) => {
+                const selecionado = projetosSelecionados[projeto.id] !== undefined;
 
-  </div>
+                return (
+                  <div key={projeto.id} className="bg-gray-700 p-2 rounded-lg">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selecionado}
+                        onChange={() => toggleProjeto(projeto.id)}
+                      />
+                      <span>{projeto.nome} ({projeto.codigo})</span>
+                    </label>
 
-  <p className="text-xs text-gray-400 mt-1">
-    Você pode selecionar mais de um projeto
-  </p>
-</div>
+                    {selecionado && (
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={projetosSelecionados[projeto.id]}
+                        onChange={(e) => atualizarValorHoraProjeto(projeto.id, e.target.value)}
+                        className="w-full mt-2 p-2 rounded-lg bg-gray-800 border border-gray-600 outline-none"
+                        placeholder="Valor/hora"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-          {/* Botão */}
           <button
-            type="submit"
-            className="p-4 rounded-lg font-semibold text-white 
-                       bg-gradient-to-r from-[#4e31aa] to-[#3a1078] 
-                       hover:opacity-90 transition"
+            className="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg font-semibold disabled:opacity-60"
+            disabled={salvando}
           >
-            Cadastrar
+            {salvando ? "Salvando..." : "Cadastrar"}
           </button>
 
         </form>
