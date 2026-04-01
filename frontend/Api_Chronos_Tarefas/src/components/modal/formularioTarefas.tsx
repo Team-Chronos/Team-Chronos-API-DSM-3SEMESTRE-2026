@@ -1,5 +1,5 @@
-import { useState, FormEvent } from "react";
-import Api from "../../servico/servicoApi";
+import { useState, FormEvent, useEffect } from "react";
+import { ApiTarefas } from "../../api/servicoApi";
 
 interface Props {
   isOpen: boolean;
@@ -7,16 +7,42 @@ interface Props {
   onSucesso?: () => void;
 }
 
+interface TipoTarefa {
+  id: number;
+  nome: string;
+}
+
 export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Props) {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [responsavelId, setResponsavelId] = useState("");
-  const [tempoMaximoMinutos, setTempoMaximoMinutos] = useState("");
-  const [status, setStatus] = useState("");
+  const [responsavelId, setResponsavelId] = useState<string>("");
+  const [prazo, setPrazo] = useState("");
+  const [status, setStatus] = useState("PENDENTE");
   const [tipoId, setTipoId] = useState<string>("");
   const [projetoId, setProjetoId] = useState<string>("");
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
+  const [tiposTarefa, setTiposTarefa] = useState<TipoTarefa[]>([]);
+  const [carregandoDados, setCarregandoDados] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      carregarTiposTarefa();
+    }
+  }, [isOpen]);
+
+  const carregarTiposTarefa = async () => {
+    setCarregandoDados(true);
+    try {
+      const tiposRes = await ApiTarefas.get('/tipoTarefa');
+      setTiposTarefa(tiposRes.data);
+    } catch (err) {
+      console.error("Erro ao carregar tipos de tarefa:", err);
+      setErro("Erro ao carregar tipos de tarefa");
+    } finally {
+      setCarregandoDados(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -25,70 +51,87 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
     setErro(null);
     setCarregando(true);
 
-    if (!tipoId) {
-      setErro("Por favor, selecione um tipo de tarefa");
+    if (!titulo.trim()) {
+      setErro("Título é obrigatório");
       setCarregando(false);
       return;
     }
 
-    const statusMap: { [key: string]: string } = {
-      "Pendente": "PENDENTE",
-      "Em andamento": "EM_ANDAMENTO",
-      "Concluída": "CONCLUIDA"
-    };
+    if (!descricao.trim()) {
+      setErro("Descrição é obrigatória");
+      setCarregando(false);
+      return;
+    }
 
-    const dadosTarefa = { 
-      titulo, 
-      descricao, 
+    if (!prazo) {
+      setErro("Prazo é obrigatório");
+      setCarregando(false);
+      return;
+    }
+
+    if (!tipoId) {
+      setErro("Selecione um tipo de tarefa");
+      setCarregando(false);
+      return;
+    }
+
+    if (!projetoId) {
+      setErro("Selecione um projeto (digite o ID)");
+      setCarregando(false);
+      return;
+    }
+
+    const dataTimestamp = new Date(prazo).getTime();
+
+    const novaTarefa = {
+      titulo: titulo.trim(),
+      descricao: descricao.trim(),
       responsavelId: responsavelId ? Number(responsavelId) : null,
-      tempoMaximoMinutos: Number(tempoMaximoMinutos),
-      status: statusMap[status] || status,
+      tempoMaximoMinutos: dataTimestamp,
+      status: status,
       tipoTarefaId: Number(tipoId),
-      projetoId: projetoId ? Number(projetoId) : null
+      projetoId: Number(projetoId)
     };
 
     try {
-      await Api.post("/tarefas", dadosTarefa);
+      await ApiTarefas.post("/tarefas", novaTarefa);
       
       setTitulo("");
       setDescricao("");
       setResponsavelId("");
-      setTempoMaximoMinutos("");
-      setStatus("");
+      setPrazo("");
+      setStatus("PENDENTE");
       setTipoId("");
       setProjetoId("");
       
       onFechar();
       if (onSucesso) onSucesso();
-    } catch (err: any) {
-      console.error("Erro completo:", err);
       
-      if (err.response) {
-        if (err.response.data && err.response.data.errors) {
-          const errors = err.response.data.errors;
-          const mensagemErro = errors.map((error: any) => 
-            `${error.field}: ${error.defaultMessage}`
-          ).join('\n');
-          setErro(mensagemErro);
-        } else if (err.response.data && err.response.data.message) {
-          setErro(err.response.data.message);
-        } else {
-          setErro("Erro ao criar tarefa! Verifique os dados e tente novamente.");
-        }
-      } else {
-        setErro("Erro ao criar tarefa! Verifique sua conexão com o servidor.");
-      }
+    } catch (err: any) {
+      console.error("Erro ao criar tarefa:", err);
+      setErro(err.response?.data?.message || "Erro ao criar tarefa. Tente novamente.");
     } finally {
       setCarregando(false);
     }
   };
 
+  if (carregandoDados) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="relative p-6 rounded shadow-lg w-full max-w-lg z-10 bg-[#252525] border border-[#3e3e3e]">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            <p className="text-white ml-2">Carregando tipos de tarefa...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div
-        className="absolute inset-0 bg-black opacity-50"
-        onClick={onFechar} 
-      ></div>
+      <div className="absolute inset-0 bg-black opacity-50" onClick={onFechar}></div>
 
       <div className="relative p-6 rounded shadow-lg w-full max-w-lg z-10" style={{ backgroundColor: '#252525', border: '1px solid #3e3e3e' }}>
         <h2 className="text-lg font-bold mb-4 text-white">Cadastrar Tarefa</h2>
@@ -103,7 +146,7 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="text"
-            placeholder="Título"
+            placeholder="Título *"
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
             className="border p-2 rounded text-white"
@@ -112,7 +155,7 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
           />
           
           <textarea
-            placeholder="Descrição"
+            placeholder="Descrição *"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             className="border p-2 rounded text-white"
@@ -123,7 +166,7 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
           
           <input
             type="number"
-            placeholder="Responsável (ID) - Opcional"
+            placeholder="ID do Responsável (opcional)"
             value={responsavelId}
             onChange={(e) => setResponsavelId(e.target.value)}
             className="border p-2 rounded text-white"
@@ -131,10 +174,10 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
           />
           
           <input
-            type="number"
-            placeholder="Tempo máximo (minutos)"
-            value={tempoMaximoMinutos}
-            onChange={(e) => setTempoMaximoMinutos(e.target.value)}
+            type="date"
+            placeholder="Prazo *"
+            value={prazo}
+            onChange={(e) => setPrazo(e.target.value)}
             className="border p-2 rounded text-white"
             style={{ backgroundColor: '#1f1f1f', borderColor: '#3e3e3e' }}
             required
@@ -147,19 +190,19 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
             style={{ backgroundColor: '#1f1f1f', borderColor: '#3e3e3e' }}
             required
           >
-            <option value="">Selecione o status</option>
-            <option value="Pendente">Pendente</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Concluída">Concluída</option>
+            <option value="PENDENTE">Pendente</option>
+            <option value="EM_ANDAMENTO">Em andamento</option>
+            <option value="CONCLUIDA">Concluída</option>
           </select>
           
           <input
             type="number"
-            placeholder="Projeto ID - Opcional"
+            placeholder="ID do Projeto *"
             value={projetoId}
             onChange={(e) => setProjetoId(e.target.value)}
             className="border p-2 rounded text-white"
             style={{ backgroundColor: '#1f1f1f', borderColor: '#3e3e3e' }}
+            required
           />
           
           <select
@@ -168,11 +211,13 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
             className="border p-2 rounded text-white"
             style={{ backgroundColor: '#1f1f1f', borderColor: '#3e3e3e' }}
             required
-          >  
-            <option value="">Selecione o tipo</option>
-            <option value="1">Desenvolvimento</option>
-            <option value="2">Teste</option>
-            <option value="3">Análise</option>
+          >
+            <option value="">Selecione o tipo de tarefa *</option>
+            {tiposTarefa.map((tipo) => (
+              <option key={tipo.id} value={tipo.id}>
+                {tipo.nome}
+              </option>
+            ))}
           </select>
 
           <div className="flex justify-end gap-2 mt-2">
@@ -195,7 +240,7 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3e3e3e'}
               disabled={carregando}
             >
-              Concluir
+              {carregando ? 'Cadastrando...' : 'Concluir'}
             </button>
           </div>
         </form>
