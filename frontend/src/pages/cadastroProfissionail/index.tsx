@@ -143,11 +143,23 @@ function CadastroProfissional() {
   return (
     <div className="w-full max-w-3xl mx-auto">
 
-      <h1 className="text-3xl font-bold mb-8 text-center">
+      <h1 className="text-3xl font-bold mb-8 text-center text-white">
         Cadastro de Profissional
       </h1>
 
-      <div className="bg-gray-800 p-8 rounded-xl shadow-md">
+      <div className="bg-[#252525] p-8 rounded-xl shadow-md">
+
+        {mensagem && (
+          <div
+            className={`mb-4 p-3 rounded-lg text-center font-medium
+              ${mensagem.tipo === "sucesso"
+                ? "bg-green-600/20 text-green-400 border border-green-500"
+                : "bg-red-600/20 text-red-400 border border-red-500"
+              }`}
+          >
+            {mensagem.texto}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
@@ -163,7 +175,7 @@ function CadastroProfissional() {
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
+              className="w-full mt-2 p-4 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
             />
           </div>
 
@@ -173,7 +185,7 @@ function CadastroProfissional() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-2 p-4 rounded-lg bg-gray-700 border border-gray-600 outline-none"
+              className="w-full mt-2 p-4 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
             />
           </div>
 
@@ -220,9 +232,9 @@ function CadastroProfissional() {
             <input
               type="text"
               placeholder="Buscar projeto..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="w-full mt-2 mb-3 p-3 rounded-lg bg-gray-700 border border-gray-600 outline-none"
+              value={buscaProjeto}
+              onChange={(e) => setBuscaProjeto(e.target.value)}
+              className="w-full mt-2 p-3 rounded-lg bg-[#3e3e3e] border border-[#3e3e3e] outline-none text-white"
             />
 
             <div className="max-h-40 overflow-y-auto flex flex-col gap-2">
