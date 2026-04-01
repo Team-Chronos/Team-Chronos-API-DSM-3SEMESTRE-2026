@@ -1,12 +1,11 @@
 import './App.css'
-import TelaTarefas from './paginas/gerenciarItensTarefas'
-import DragDropTarefas from './paginas/DragDropTarefas'
+import TelaTarefas from './pages/GerenciarTarefas/gerenciarItensTarefas'
+import DragDropTarefas from './components/DragDropTarefas'
 
 function App() {
   return (
     <>
       <TelaTarefas/>
-      <DragDropTarefas/>
     </>
   )
 }
