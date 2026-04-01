@@ -5,7 +5,7 @@ import AssociacaoProfissionalProjeto from "../pages/associacaoProfissionalProjet
 import GestaoProfissionais from "../pages/gestaoDeProfissionais";
 import Login from "../pages/login";
 
-const Layout = lazy(() => import("../components/Layout"))
+const Layout = lazy(() => import("../components/layout"))
 
 const AppRoutes = createBrowserRouter([{
     path: "/",
