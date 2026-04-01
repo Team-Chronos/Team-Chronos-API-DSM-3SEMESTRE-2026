@@ -17,12 +17,19 @@ function formatarMoeda(valor: number): string {
 }
 
 function formatarHoras(valor: number): string {
-  return `${new Intl.NumberFormat("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(valor)}h`;
-}
+  if (!Number.isFinite(valor) || valor < 0) {
+    return "--";
+  }
 
+  const horas = Math.floor(valor);
+  const minutos = Math.round((valor - horas) * 60);
+
+  if (minutos === 0) {
+    return `${horas}h`;
+  }
+
+  return `${horas}h${String(minutos).padStart(2, "0")}m`;
+}
 function calcularMediaValorHora(projetos: ProjetoProfissional[]): number {
   if (projetos.length === 0) {
     return 0;

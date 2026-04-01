@@ -19,10 +19,18 @@ function formatarMoeda(valor: number): string {
 }
 
 function formatarHoras(valor: number): string {
-  return `${new Intl.NumberFormat("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(valor)}h`;
+  if (!Number.isFinite(valor) || valor < 0) {
+    return "--";
+  }
+
+  const horas = Math.floor(valor);
+  const minutos = Math.round((valor - horas) * 60);
+
+  if (minutos === 0) {
+    return `${horas}h`;
+  }
+
+  return `${horas}h${String(minutos).padStart(2, "0")}m`;
 }
 
 export default function ListaProjetos({ projetos }: ListaProjetosProps) {
@@ -76,7 +84,7 @@ export default function ListaProjetos({ projetos }: ListaProjetosProps) {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-4">
               <span className="h-4 w-4 rounded-md bg-gradient-to-br from-pink-500 to-cyan-400" />
-              <h2 className="text-[28px] font-semibold uppercase tracking-wide text-white">
+              <h2 className="text-[20px] font-semibold uppercase tracking-wide text-white">
                 Projetos
               </h2>
             </div>

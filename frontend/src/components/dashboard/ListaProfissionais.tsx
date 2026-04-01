@@ -18,10 +18,18 @@ function formatarMoeda(valor: number): string {
 }
 
 function formatarHoras(valor: number): string {
-  return `${new Intl.NumberFormat("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(valor)}h`;
+  if (!Number.isFinite(valor) || valor < 0) {
+    return "--";
+  }
+
+  const horas = Math.floor(valor);
+  const minutos = Math.round((valor - horas) * 60);
+
+  if (minutos === 0) {
+    return `${horas}h`;
+  }
+
+  return `${horas}h${String(minutos).padStart(2, "0")}m`;
 }
 
 export default function ListaProfissionais({
@@ -54,7 +62,7 @@ export default function ListaProfissionais({
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-4">
               <span className="h-4 w-4 rounded-md bg-gradient-to-br from-pink-500 to-cyan-400" />
-              <h2 className="text-[28px] font-semibold text-white">
+              <h2 className="text-[20px] font-semibold text-white">
                 DESENVOLVEDORES
               </h2>
             </div>
@@ -67,9 +75,8 @@ export default function ListaProfissionais({
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-7 w-7 transition-transform duration-300 ${
-                  buscaAberta ? "rotate-90 text-white" : ""
-                }`}
+                className={`h-7 w-7 transition-transform duration-300 ${buscaAberta ? "rotate-90 text-white" : ""
+                  }`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -85,19 +92,17 @@ export default function ListaProfissionais({
           </div>
 
           <div
-            className={`grid transition-all duration-300 ease-out ${
-              buscaAberta
+            className={`grid transition-all duration-300 ease-out ${buscaAberta
                 ? "mt-4 grid-rows-[1fr] opacity-100"
                 : "grid-rows-[0fr] opacity-0"
-            }`}
+              }`}
           >
             <div className="overflow-hidden">
               <div
-                className={`transition-all duration-300 ease-out ${
-                  buscaAberta
+                className={`transition-all duration-300 ease-out ${buscaAberta
                     ? "translate-y-0 scale-100"
                     : "-translate-y-2 scale-[0.98]"
-                }`}
+                  }`}
               >
                 <Search
                   value={busca}

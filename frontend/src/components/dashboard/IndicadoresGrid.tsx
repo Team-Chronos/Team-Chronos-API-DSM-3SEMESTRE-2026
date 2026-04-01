@@ -24,7 +24,7 @@ function CardResumo({ titulo, valor }: CardResumoProps) {
     <div className="rounded-[15px] bg-[#232329] px-7 py-7">
       <p className="text-[15px] text-white/75">{titulo}</p>
 
-      <p className="mt-10 text-6xl font-semibold leading-none text-white">
+      <p className="mt-10 text-3xl font-semibold leading-none text-white">
         {temValor ? formatarNumero(valor) : "--"}
       </p>
 

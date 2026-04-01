@@ -94,13 +94,13 @@ export default function FinanceiroPage() {
             </section>
           </div>
 
-          <aside className="h-[681px] rounded-[15px] bg-gradient-to-b from-[#6627cc] to-[#4a1898] px-8 py-9 shadow-[0_20px_60px_rgba(76,29,149,0.35)]">
+          <aside className="h-[450px] w-[250px] rounded-[15px] bg-gradient-to-b from-[#6627cc] to-[#4a1898] px-8 py-9 shadow-[0_20px_60px_rgba(76,29,149,0.35)]">
             <div className="flex h-full flex-col justify-start gap-16">
               <div>
                 <p className="text-[15px] font-medium text-white/85">
                   Desenvolvedores
                 </p>
-                <p className="mt-4 text-6xl font-semibold leading-none">
+                <p className="mt-4 text-3xl font-semibold leading-none">
                   {formatarInteiro(dashboard.totalDesenvolvedores)}
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function FinanceiroPage() {
                 <p className="text-[15px] font-medium text-white/85">
                   Custo Total Projetos
                 </p>
-                <p className="mt-4 text-6xl font-semibold leading-tight">
+                <p className="mt-4 text-3xl font-semibold leading-tight">
                   {formatarMoeda(dashboard.custoTotal)}
                 </p>
               </div>
@@ -118,7 +118,7 @@ export default function FinanceiroPage() {
                 <p className="text-[15px] font-medium text-white/85">
                   Projetos Concluídos
                 </p>
-                <p className="mt-4 text-6xl font-semibold leading-none">
+                <p className="mt-4 text-3xl font-semibold leading-none">
                   {formatarInteiro(dashboard.projetosConcluidos)}
                 </p>
               </div>
