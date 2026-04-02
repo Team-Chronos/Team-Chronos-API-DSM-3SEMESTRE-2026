@@ -33,6 +33,7 @@ class ItemService {
       });
       
       const novoItem = response.data;
+      const itemId = novoItem.idItem || novoItem.id;
       
       const tarefaResponse = await ApiTarefas.get(`/tarefas/${tarefaId}`);
       const tarefa = tarefaResponse.data;
@@ -45,19 +46,21 @@ class ItemService {
         status: tarefa.status,
         tipoTarefaId: tarefa.tipoTarefaId,
         projetoId: tarefa.projetoId,
-        itemId: novoItem.id
+        itemId: itemId  
       };
       
       await ApiTarefas.put(`/tarefas/${tarefaId}`, tarefaAtualizada);
       
       return {
-        ...novoItem,
+        id: itemId,
+        nome: novoItem.nome,
+        descricao: novoItem.descricao,
         tarefaId,
         createdAt: novoItem.createdAt || new Date().toISOString()
       };
       
     } catch (error) {
-      console.error("Erro ao criar item:", error);
+      console.error("Erro detalhado ao criar item:", error);
       throw error;
     }
   }
@@ -77,6 +80,30 @@ class ItemService {
     } catch (error) {
       console.error("Erro ao atualizar item:", error);
       return null;
+    }
+  }
+
+  async vincularItemATarefa(tarefaId: number, itemId: number): Promise<boolean> {
+    try {
+      const tarefaResponse = await ApiTarefas.get(`/tarefas/${tarefaId}`);
+      const tarefa = tarefaResponse.data;
+      
+      const tarefaAtualizada = {
+        titulo: tarefa.titulo,
+        descricao: tarefa.descricao,
+        responsavelId: tarefa.responsavelId,
+        tempoMaximoMinutos: tarefa.tempoMaximoMinutos,
+        status: tarefa.status,
+        tipoTarefaId: tarefa.tipoTarefaId,
+        projetoId: tarefa.projetoId,
+        itemId: itemId
+      };
+      
+      await ApiTarefas.put(`/tarefas/${tarefaId}`, tarefaAtualizada);
+      return true;
+    } catch (error) {
+      console.error("Erro ao vincular item:", error);
+      return false;
     }
   }
 }

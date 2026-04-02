@@ -292,7 +292,7 @@ export default function ModalCadastroTarefa({ isOpen, onFechar, onSucesso }: Pro
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3e3e3e'}
               disabled={carregando}
             >
-              {carregando ? 'Cadastrando...' : 'Concluir'}
+              Cadastrando
             </button>
           </div>
         </form>

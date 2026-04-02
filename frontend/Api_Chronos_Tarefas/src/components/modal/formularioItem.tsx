@@ -1,5 +1,6 @@
 import { useState, FormEvent } from "react";
 import itemService from "../../api/itemService";
+import { ApiTarefas } from "../../api/servicoApi";
 
 interface Props {
   tarefaId: number;
@@ -34,16 +35,47 @@ export default function ModalCadastroItem({ tarefaId, isOpen, onFechar, onSucess
     }
 
     try {
-      await itemService.criarItem(nome.trim(), descricao.trim(), tarefaId);
+      console.log("=== CRIANDO ITEM ===");
+      console.log("Tarefa ID:", tarefaId);
+      console.log("Nome:", nome);
+      console.log("Descrição:", descricao);
+      
+      const novoItem = await itemService.criarItem(nome.trim(), descricao.trim(), tarefaId);
+      
+      console.log("Item criado com sucesso:", novoItem);
+      
+      // VERIFICAR se o item foi vinculado à tarefa
+      const tarefaResponse = await ApiTarefas.get(`/tarefas/${tarefaId}`);
+      console.log("Tarefa após criar item:", tarefaResponse.data);
+      console.log("itemId na tarefa:", tarefaResponse.data.itemId);
+      
+      if (tarefaResponse.data.itemId === novoItem.id) {
+        console.log("✅ Item vinculado com sucesso!");
+      } else {
+        console.warn("⚠️ Item NÃO foi vinculado automaticamente. Tentando vincular manualmente...");
+        const idCorreto = novoItem.id;
+        console.log(`Tentando vincular item ${idCorreto} à tarefa ${tarefaId}`);
+        
+        const vinculado = await itemService.vincularItemATarefa(tarefaId, idCorreto);
+        
+        if (vinculado) {
+          console.log("✅ Item vinculado manualmente com sucesso!");
+        } else {
+          console.error("❌ Falha ao vincular item manualmente");
+          setErro("Item criado mas não foi possível vincular à tarefa. Tente novamente.");
+          setCarregando(false);
+          return;
+        }
+      }
       
       setNome("");
       setDescricao("");
       onFechar();
       if (onSucesso) onSucesso();
       
-    } catch (err) {
-      console.error("Erro ao criar item:", err);
-      setErro("Erro ao salvar o item. Tente novamente.");
+    } catch (err: any) {
+      console.error("Erro detalhado ao criar item:", err);
+      setErro(`Erro ao salvar o item: ${err.response?.data?.message || err.message || "Tente novamente."}`);
     } finally {
       setCarregando(false);
     }
@@ -89,8 +121,6 @@ export default function ModalCadastroItem({ tarefaId, isOpen, onFechar, onSucess
               onClick={onFechar}
               className="px-4 py-2 rounded transition-colors text-white"
               style={{ backgroundColor: '#3e3e3e' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4e4e4e'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3e3e3e'}
               disabled={carregando}
             >
               Cancelar
@@ -99,11 +129,8 @@ export default function ModalCadastroItem({ tarefaId, isOpen, onFechar, onSucess
               type="submit"
               className="px-4 py-2 rounded transition-colors text-white"
               style={{ backgroundColor: '#3e3e3e' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4e4e4e'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3e3e3e'}
-              disabled={carregando}
             >
-              {carregando ? 'Salvando...' : 'Concluir'}
+              Cadastrar
             </button>
           </div>
         </form>

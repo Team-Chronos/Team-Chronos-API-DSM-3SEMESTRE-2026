@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ApiTarefas } from '../../api/servicoApi';
-import itemService, { Item } from "../../api/itemService";
+import tarefaItemAdapter, { TarefaComItem } from '../../api/tarefaItemAdapter';
 import projetoService from '../../api/projetoService';
 
 interface Props {
@@ -16,7 +16,7 @@ interface ResponsavelProjeto {
 }
 
 export default function ModalVisualizarTarefa({ tarefa, isOpen, onFechar, onAtualizar }: Props) {
-  const [itens, setItens] = useState<Item[]>([]);
+  const [tarefaComItem, setTarefaComItem] = useState<TarefaComItem | null>(null);
   const [carregando, setCarregando] = useState(false);
   const [editandoResponsavel, setEditandoResponsavel] = useState(false);
   const [responsavelSelecionado, setResponsavelSelecionado] = useState<string>("");
@@ -27,7 +27,7 @@ export default function ModalVisualizarTarefa({ tarefa, isOpen, onFechar, onAtua
 
   useEffect(() => {
     if (isOpen && tarefa?.id) {
-      carregarItens();
+      carregarTarefaComItem();
       carregarResponsaveis();
       if (tarefa.responsavelId) {
         setResponsavelSelecionado(String(tarefa.responsavelId));
@@ -38,14 +38,14 @@ export default function ModalVisualizarTarefa({ tarefa, isOpen, onFechar, onAtua
     }
   }, [isOpen, tarefa]);
 
-  const carregarItens = async () => {
+  const carregarTarefaComItem = async () => {
     setCarregando(true);
     try {
-      const itensDaTarefa = await itemService.getItensPorTarefa(tarefa.id);
-      setItens(itensDaTarefa);
+      const resultado = await tarefaItemAdapter.buscarTarefaComItem(tarefa.id);
+      setTarefaComItem(resultado);
     } catch (err) {
-      console.error("Erro ao carregar itens:", err);
-      setItens([]);
+      console.error("Erro ao carregar tarefa com item:", err);
+      setTarefaComItem(null);
     } finally {
       setCarregando(false);
     }
@@ -212,9 +212,8 @@ export default function ModalVisualizarTarefa({ tarefa, isOpen, onFechar, onAtua
                   <button
                     onClick={handleSalvarResponsavel}
                     className="px-3 py-1 rounded text-sm bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-                    disabled={salvando}
                   >
-                    {salvando ? 'Salvando...' : 'Salvar'}
+                    salvar
                   </button>
                 </div>
               </div>
@@ -256,26 +255,37 @@ export default function ModalVisualizarTarefa({ tarefa, isOpen, onFechar, onAtua
           </div>
 
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase block mb-2">Itens / Subtarefas</label>
-            <div className="max-h-48 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+            <label className="text-xs font-bold text-gray-500 uppercase block mb-2">
+              Item / Subtarefa
+            </label>
+            <div className="space-y-2">
               {carregando ? (
-                <p className="text-gray-500 animate-pulse">A carregar itens...</p>
-              ) : itens.length > 0 ? (
-                itens.map(item => (
-                  <div key={item.id} className="p-3 rounded bg-[#2a2a2a] border-l-4 border-blue-500 shadow-sm">
-                    <div className="text-white text-sm font-semibold">{item.nome}</div>
-                    <div className="text-gray-400 text-xs">{item.descricao}</div>
-                    {item.createdAt && (
-                      <div className="text-gray-500 text-[10px] mt-1">
-                        Criado em: {new Date(item.createdAt).toLocaleDateString('pt-BR')}
-                      </div>
-                    )}
-                  </div>
-                ))
+                <p className="text-gray-500 animate-pulse">Carregando item...</p>
+              ) : tarefaComItem?.item ? (
+                <div className="p-3 rounded bg-[#2a2a2a] border-l-4 border-blue-500 shadow-sm">
+                  <div className="text-white text-sm font-semibold">{tarefaComItem.item.nome}</div>
+                  <div className="text-gray-400 text-xs">{tarefaComItem.item.descricao}</div>
+                  {tarefaComItem.item.createdAt && (
+                    <div className="text-gray-500 text-[10px] mt-1">
+                      Criado em: {new Date(tarefaComItem.item.createdAt).toLocaleDateString('pt-BR')}
+                    </div>
+                  )}
+                </div>
               ) : (
-                <p className="text-gray-500 italic text-sm text-center py-4 bg-[#1f1f1f] rounded">
-                  Nenhum item vinculado a esta tarefa.
-                </p>
+                <div className="text-center py-4 bg-[#1f1f1f] rounded">
+                  <p className="text-gray-500 italic text-sm">
+                    Nenhum item vinculado a esta tarefa.
+                  </p>
+                  <button
+                    onClick={() => {
+                      onFechar();
+                      window.dispatchEvent(new CustomEvent('abrirModalItem', { detail: { tarefaId: tarefa.id } }));
+                    }}
+                    className="mt-2 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    + Adicionar item
+                  </button>
+                </div>
               )}
             </div>
           </div>
