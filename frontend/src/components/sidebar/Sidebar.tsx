@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { to: "/projetos", icon: FolderKanban, label: "Projetos" },
   { to: "/profissionais", icon: Users, label: "Profissionais" },
   { to: "/associacoes", icon: Link, label: "Associações" },
-  { to: "/gerenciar/tarefas", icon: ClipboardList, label: "Gerenciar Tarefas" }
+  { to: "/projetos-antigo", icon: ClipboardList, label: "Tarefas" }
 ];
 
 export default function Sidebar() {
