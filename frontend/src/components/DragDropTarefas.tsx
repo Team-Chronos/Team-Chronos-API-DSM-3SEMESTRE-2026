@@ -10,9 +10,9 @@ import {
 
 import { Droppable } from './colunas';
 import { Draggable } from './cardTarefa';
-import Api from '../api/servicoApi';
+import Api from '../service/servicoApi';
 import ModalVisualizarTarefa from './modal/ModalVisualizarTarefa';
-import itemService from '../api/itemService';
+import itemService from '../types/itemService';
 
 interface Tarefa {
   id: number;
