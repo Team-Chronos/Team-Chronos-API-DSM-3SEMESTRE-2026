@@ -6,8 +6,9 @@ import GestaoProfissionais from "../pages/gestaoDeProfissionais";
 import Login from "../pages/login";
 import AppLayout from "../components/layout/AppLayout";
 import ApontamentoTempo from "../pages/ApontamentoTempo";
+import Projetos from "../pages/Projetos";
 
-const Layout = lazy(() => import("../components/layout"))
+
 const DashboardPage = lazy(() => (import("../pages/Financeiro/FinanceiroPage")))
 
 const AppRoutes = createBrowserRouter([{
@@ -21,6 +22,10 @@ const AppRoutes = createBrowserRouter([{
         {
             index: true,
             element: <Navigate to="/profissionais" replace />
+        },
+        {
+            path: "/projetos",
+            element: <Projetos />
         },
         {
             path: "profissionais",
