@@ -6,6 +6,7 @@ import GestaoProfissionais from "../pages/gestaoDeProfissionais";
 import ApontamentoTempo from "../pages/ApontamentoTempo";
 import TarefasPorProjeto from "../pages/GerenciarTarefas/TarefasPorProjeto";
 import TelaProjetos from "../pages/GerenciarTarefas/Projetos";
+import Projetos from "../pages/Projetos"; 
 import Login from "../pages/login";
 
 const Layout = lazy(() => import("../components/Layout"))
@@ -22,7 +23,7 @@ const AppRoutes = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to="/profissionais" replace />
+                element: <Navigate to="/projetos" replace />
             },
             {
                 path: "profissionais",
@@ -33,7 +34,6 @@ const AppRoutes = createBrowserRouter([
                 element: <AssociacaoProfissionalProjeto />
             },
             {
-
                 path: "/gestao-profissionais",
                 element: <GestaoProfissionais />
             },
@@ -50,6 +50,10 @@ const AppRoutes = createBrowserRouter([
                 element: <Projetos />
             },
             {
+                path: "projetos-antigo",
+                element: <TelaProjetos />
+            },
+            {
                 path: "projetos/:projetoId/apontamento/",
                 element: (
                     <Suspense fallback={<div>Loading...</div>}>
@@ -57,19 +61,11 @@ const AppRoutes = createBrowserRouter([
                     </Suspense>
                 )
             },
-                {
-                path: "projetos/:projetoId/tarefas", 
+            {
+                path: "projetos/:projetoId/tarefas",
                 element: (
                     <Suspense fallback={<div>Loading...</div>}>
                         <TarefasPorProjeto />
-                    </Suspense>
-                )
-            },
-            {
-                path: "projetos",
-                element: (
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <TelaProjetos />
                     </Suspense>
                 )
             }
