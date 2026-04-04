@@ -7,7 +7,6 @@ import projetoService from "../../types/projetoService";
 
 export default function TarefasPorProjeto() {
   const { projetoId } = useParams<{ projetoId: string }>();
-  console.log("=== TAREFAS POR PROJETO RENDERIZOU ===");
   const navigate = useNavigate();
   const [projeto, setProjeto] = useState<any>(null);
   const [modalItemAberto, setModalItemAberto] = useState<boolean>(false);
