@@ -51,10 +51,8 @@ function Projetos() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-white">
-          Projetos
-        </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-white">Projetos</h1>
 
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -63,35 +61,32 @@ function Projetos() {
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Pesquisar projeto..."
-              className="bg-[#2a2a2c] text-white pl-3 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+              className="w-64 rounded-lg bg-[#2a2a2c] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <button
             onClick={() => setModalAberto(true)}
-            className="bg-gradient-to-b from-[#6627cc] to-[#4a1898] hover:brightness-110 hover:scale-[1.03] cursor-pointer text-white px-4 py-2 rounded-lg font-medium shadow-lg transition"
+            className="cursor-pointer rounded-lg bg-gradient-to-b from-[#6627cc] to-[#4a1898] px-4 py-2 font-medium text-white shadow-lg transition hover:scale-[1.03] hover:brightness-110"
           >
             + Novo
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {loading &&
           Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-[#2a2a2c] rounded-2xl p-4 animate-pulse"
-            >
-              <div className="h-6 bg-mist-950 animate-pulse rounded mb-3"></div>
-              <div className="h-4 bg-mist-950 animate-pulse rounded mb-2"></div>
-              <div className="h-4 bg-mist-950 animate-pulse rounded mb-2"></div>
-              <div className="h-4 bg-mist-950 animate-pulse rounded"></div>
+            <div key={i} className="rounded-2xl bg-[#2a2a2c] p-4 animate-pulse">
+              <div className="mb-3 h-6 rounded bg-mist-950 animate-pulse"></div>
+              <div className="mb-2 h-4 rounded bg-mist-950 animate-pulse"></div>
+              <div className="mb-2 h-4 rounded bg-mist-950 animate-pulse"></div>
+              <div className="h-4 rounded bg-mist-950 animate-pulse"></div>
             </div>
           ))}
 
         {!loading && projetosFiltrados.length === 0 && (
-          <div className="col-span-full text-center text-slate-400 mt-10">
+          <div className="col-span-full mt-10 text-center text-slate-400">
             Nenhum projeto encontrado
           </div>
         )}
@@ -100,50 +95,42 @@ function Projetos() {
           projetosFiltrados.map((projeto) => (
             <div
               key={projeto.id}
-              onClick={() =>
-                navigate(`/projetos/${projeto.id}/apontamento`)
-              }
+              onClick={() => navigate(`/projetos/${projeto.id}/apontamento`)}
               className="
-                bg-[#2a2a2c]
-                hover:bg-gradient-to-b from-[#6627cc] to-[#4a1898]
-                border border-transparent
-                hover:border-[#6627cc]
-                text-white
-                rounded-2xl
-                p-4
-                transition
                 cursor-pointer
+                rounded-2xl
+                border border-transparent
+                bg-[#2a2a2c]
+                p-4
+                text-white
                 shadow-md
-                hover:shadow-xl
+                transition
                 hover:scale-[1.03]
+                hover:border-[#6627cc]
+                hover:bg-gradient-to-b
+                hover:from-[#6627cc]
+                hover:to-[#4a1898]
+                hover:shadow-xl
               "
             >
-              <h2 className="text-lg font-semibold mb-2">
-                {projeto.nome}
-              </h2>
+              <h2 className="mb-2 text-lg font-semibold">{projeto.nome}</h2>
 
               <div className="space-y-1 text-sm text-slate-300">
                 <p>
-                  <span className="text-slate-400">Código:</span>{" "}
-                  {projeto.codigo}
+                  <span className="text-slate-400">Código:</span> {projeto.codigo}
                 </p>
 
                 <p>
-                  <span className="text-slate-400">Tipo:</span>{" "}
-                  {projeto.tipoProjeto}
+                  <span className="text-slate-400">Tipo:</span> {projeto.tipoProjeto}
                 </p>
 
                 <p>
                   <span className="text-slate-400">Início:</span>{" "}
-                  {new Date(
-                    projeto.dataInicio
-                  ).toLocaleDateString("pt-BR")}
+                  {new Date(projeto.dataInicio).toLocaleDateString("pt-BR")}
                 </p>
 
                 <p>
-                  <span className="text-slate-400">
-                    Responsável:
-                  </span>{" "}
+                  <span className="text-slate-400">Responsável:</span>{" "}
                   {projeto.responsavelId}
                 </p>
               </div>
@@ -151,14 +138,14 @@ function Projetos() {
           ))}
       </div>
 
-      {modalAberto && (
-        <ModalCadastro
-          fecharModal={() => {
-            setModalAberto(false);
-            carregarProjetos();
-          }}
-        />
-      )}
+      <ModalCadastro
+        aberto={modalAberto}
+        onFechar={() => setModalAberto(false)}
+        onProjetoCadastrado={() => {
+          setModalAberto(false);
+          carregarProjetos();
+        }}
+      />
     </div>
   );
 }

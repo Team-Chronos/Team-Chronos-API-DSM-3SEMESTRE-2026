@@ -1,6 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import ModalBase from "../modais/ModalBase";
 
-function ModalCadastro({ fecharModal }: { fecharModal: () => void }) {
+interface ModalCadastroProps {
+  aberto: boolean;
+  onFechar: () => void;
+  onProjetoCadastrado?: () => void;
+}
+
+export default function ModalCadastro({
+  aberto,
+  onFechar,
+  onProjetoCadastrado,
+}: ModalCadastroProps) {
   const [formData, setFormData] = useState({
     nome: "",
     codigo: "",
@@ -9,22 +20,13 @@ function ModalCadastro({ fecharModal }: { fecharModal: () => void }) {
     horasContratadas: 0,
     dataInicio: "",
     dataFim: "",
-    responsavelId: 0
+    responsavelId: 0,
   });
 
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") fecharModal();
-    };
-
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [fecharModal]);
-
-  const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({
+  const handleChange = (field: string, value: string | number) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -37,187 +39,158 @@ function ModalCadastro({ fecharModal }: { fecharModal: () => void }) {
       horasContratadas: 0,
       dataInicio: "",
       dataFim: "",
-      responsavelId: 0
+      responsavelId: 0,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const response = await fetch("http://localhost:8080/projetos", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        alert("Projeto cadastrado com sucesso!");
-        limparForm();
-        fecharModal();
-      } else {
+      if (!response.ok) {
         alert("Erro ao cadastrar. Verifique os dados.");
         console.log(formData);
+        return;
       }
+
+      alert("Projeto cadastrado com sucesso!");
+      limparForm();
+      onProjetoCadastrado?.();
+      onFechar();
     } catch (error) {
       console.error("Erro na requisição:", error);
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/60 flex items-start justify-center overflow-y-auto p-4 z-50"
-      onClick={fecharModal}
+    <ModalBase
+      aberto={aberto}
+      onFechar={onFechar}
+      titulo="Adicionar Novo Projeto"
+      subtitulo="Preencha os dados para cadastrar um novo projeto."
+      larguraClasse="max-w-2xl"
     >
-      <div
-        className="bg-[#1b1b1f] text-white p-6 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-texto font-semibold text-lg">
-            Adicionar Novo Projeto
-          </h2>
-
-          <button
-            onClick={fecharModal}
-            className="text-gray-300 hover:text-white text-xl"
-          >
-            ✕
-          </button>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <label className="mb-1 block font-semibold text-white">
+            Nome do Projeto
+          </label>
+          <input
+            type="text"
+            value={formData.nome}
+            onChange={(e) => handleChange("nome", e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <div>
-            <label className="block font-semibold mb-1">
-              Nome do Projeto
-            </label>
-            <input
-              type="text"
-              value={formData.nome}
-              onChange={(e) => handleChange("nome", e.target.value)}
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">
+            Código do Projeto
+          </label>
+          <input
+            type="text"
+            value={formData.codigo}
+            onChange={(e) => handleChange("codigo", e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Código do Projeto
-            </label>
-            <input
-              type="text"
-              value={formData.codigo}
-              onChange={(e) => handleChange("codigo", e.target.value)}
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">Tipo</label>
+          <select
+            value={formData.tipoProjeto}
+            onChange={(e) => handleChange("tipoProjeto", e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          >
+            <option value="">Selecione</option>
+            <option value="HORA_FECHADA">Hora Fechada</option>
+            <option value="ALOCACAO">Alocação</option>
+          </select>
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">Tipo</label>
-            <select
-              value={formData.tipoProjeto}
-              onChange={(e) =>
-                handleChange("tipoProjeto", e.target.value)
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            >
-              <option value="">Selecione</option>
-              <option value="HORA_FECHADA">Hora Fechada</option>
-              <option value="ALOCACAO">Alocação</option>
-            </select>
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">
+            Valor Hora Base
+          </label>
+          <input
+            type="number"
+            value={formData.valorHoraBase}
+            onChange={(e) => handleChange("valorHoraBase", Number(e.target.value))}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Valor Hora Base
-            </label>
-            <input
-              type="number"
-              value={formData.valorHoraBase}
-              onChange={(e) =>
-                handleChange("valorHoraBase", Number(e.target.value))
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">
+            Horas Contratadas
+          </label>
+          <input
+            type="number"
+            value={formData.horasContratadas}
+            onChange={(e) => handleChange("horasContratadas", Number(e.target.value))}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Horas Contratadas
-            </label>
-            <input
-              type="number"
-              value={formData.horasContratadas}
-              onChange={(e) =>
-                handleChange("horasContratadas", Number(e.target.value))
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">
+            Data de Início
+          </label>
+          <input
+            type="date"
+            value={formData.dataInicio}
+            onChange={(e) => handleChange("dataInicio", e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Data de Início
-            </label>
-            <input
-              type="date"
-              value={formData.dataInicio}
-              onChange={(e) =>
-                handleChange("dataInicio", e.target.value)
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div>
+          <label className="mb-1 block font-semibold text-white">Data Fim</label>
+          <input
+            type="date"
+            value={formData.dataFim}
+            onChange={(e) => handleChange("dataFim", e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Data Fim
-            </label>
-            <input
-              type="date"
-              value={formData.dataFim}
-              onChange={(e) =>
-                handleChange("dataFim", e.target.value)
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div className="md:col-span-2">
+          <label className="mb-1 block font-semibold text-white">
+            Responsável ID
+          </label>
+          <input
+            type="number"
+            value={formData.responsavelId}
+            onChange={(e) => handleChange("responsavelId", Number(e.target.value))}
+            className="w-full rounded-lg border border-white/10 bg-[#3d3d40] p-3 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+          />
+        </div>
 
-          <div>
-            <label className="block font-semibold mb-1">
-              Responsável ID
-            </label>
-            <input
-              type="number"
-              value={formData.responsavelId}
-              onChange={(e) =>
-                handleChange("responsavelId", Number(e.target.value))
-              }
-              className="w-full p-2 rounded bg-[#3d3d40] border border-mist-500"
-            />
-          </div>
+        <div className="md:col-span-2 flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={onFechar}
+            className="rounded-xl border border-white/10 bg-white/10 px-5 py-3 font-medium text-white transition hover:bg-white/15"
+          >
+            Cancelar
+          </button>
 
-          <div className="flex justify-end gap-2 mt-2">
-            <button
-              type="button"
-              onClick={fecharModal}
-              className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700"
-            >
-              Cancelar
-            </button>
-
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700"
-            >
-              Adicionar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <button
+            type="submit"
+            className="rounded-xl bg-gradient-to-r from-[#6627cc] to-[#4a1898] px-5 py-3 font-medium text-white transition hover:brightness-110"
+          >
+            Adicionar
+          </button>
+        </div>
+      </form>
+    </ModalBase>
   );
 }
-
-export default ModalCadastro;
